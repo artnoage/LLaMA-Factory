@@ -28,9 +28,9 @@ def calculate_tile_size(width, height):
 
 # Function to generate a single grid with variable sizes
 def generate_grid(name, min_width=5, max_width=12, min_height=5, max_height=12):
-    # Generate random width and height with higher probability for smaller dimensions
+    # Generate random width and height with much higher probability for smaller dimensions
     def weighted_random(min_val, max_val):
-        weights = [1/(i-min_val+1) for i in range(min_val, max_val+1)]
+        weights = [1/((i-min_val+1)**2) for i in range(min_val, max_val+1)]
         return random.choices(range(min_val, max_val+1), weights=weights)[0]
     
     width = weighted_random(min_width, max_width)
