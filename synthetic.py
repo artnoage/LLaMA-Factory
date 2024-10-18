@@ -43,6 +43,13 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     base_probabilities = np.array(base_probabilities)
     base_probabilities /= base_probabilities.sum()
     
+    # Ensure probabilities sum to 1
+    base_probabilities /= base_probabilities.sum()
+    
+    # Debug output
+    print(f"Base probabilities: {base_probabilities}")
+    print(f"Sum of base probabilities: {base_probabilities.sum()}")
+    
     # Create transition matrix for Markov chain
     transition_matrix = np.zeros((len(colors), len(colors)))
     black_index = colors.index('Black')
