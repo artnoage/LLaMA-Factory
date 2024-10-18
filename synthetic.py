@@ -86,7 +86,9 @@ def place_grids(grids, max_attempts=10000):
     return True
 
 def render_image(grids):
-    canvas = Image.new('RGB', CANVAS_SIZE, (255, 255, 255))
+    # Light gray background color
+    background_color = (245, 245, 245)
+    canvas = Image.new('RGB', CANVAS_SIZE, background_color)
     draw = ImageDraw.Draw(canvas)
     try:
         font = ImageFont.truetype("arial.ttf", 24)
