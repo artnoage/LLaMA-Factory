@@ -37,11 +37,34 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     tile_size = max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, int(tile_size * noise)))
     
     colors = list(COLOR_MAP.keys())
-    probabilities = [0.6 if color == 'Black' else 0.4 / (len(colors) - 1) for color in colors]
-    probabilities = np.array(probabilities)
-    probabilities /= probabilities.sum()
+    base_probabilities = [0.6 if color == 'Black' else 0.4 / (len(colors) - 1) for color in colors]
+    base_probabilities = np.array(base_probabilities)
+    base_probabilities /= base_probabilities.sum()
     
-    grid_array = np.random.choice(colors, size=(height, width), p=probabilities)
+    # Create transition matrix for Markov chain
+    transition_matrix = np.zeros((len(colors), len(colors)))
+    for i in range(len(colors)):
+        for j in range(len(colors)):
+            if i == j:
+                transition_matrix[i][j] = 0.7  # 70% chance of same color
+            else:
+                transition_matrix[i][j] = 0.3 / (len(colors) - 1)  # Distribute remaining 30% equally
+    
+    grid_array = np.empty((height, width), dtype=object)
+    for i in range(height):
+        for j in range(width):
+            if i == 0 and j == 0:
+                grid_array[i][j] = np.random.choice(colors, p=base_probabilities)
+            else:
+                if j > 0:
+                    prev_color = grid_array[i][j-1]
+                elif i > 0:
+                    prev_color = grid_array[i-1][j]
+                else:
+                    prev_color = np.random.choice(colors, p=base_probabilities)
+                
+                prev_color_index = colors.index(prev_color)
+                grid_array[i][j] = np.random.choice(colors, p=transition_matrix[prev_color_index])
     
     return {
         'name': name,
