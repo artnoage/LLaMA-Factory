@@ -40,9 +40,9 @@ def generate_grid(name, min_width=5, max_width=12, min_height=5, max_height=12):
     probabilities = []
     for color in colors:
         if color == 'Black':
-            probabilities.append(0.4)  # 40% probability for black tiles
+            probabilities.append(0.6)  # 60% probability for black tiles
         else:
-            probabilities.append(0.6 / (len(colors) - 1))  # Evenly distribute the remaining probability
+            probabilities.append(0.4 / (len(colors) - 1))  # Evenly distribute the remaining probability
     # Ensure the probabilities sum to 1
     probabilities = np.array(probabilities)
     probabilities /= probabilities.sum()
