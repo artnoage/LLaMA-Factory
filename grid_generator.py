@@ -66,12 +66,17 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
 
 def place_grids(grids, canvas_size, margin):
     placed_grids = []
-    extra_margin = 20  # Additional margin between grids
+    extra_margin = 10  # Reduced additional margin between grids
+    max_attempts = 1000  # Increased maximum attempts
+
+    # Sort grids by area (largest first)
+    grids.sort(key=lambda g: g['width'] * g['height'], reverse=True)
+
     for grid in grids:
         grid_width = grid['width'] * grid['tile_size']
         grid_height = grid['height'] * grid['tile_size']
         
-        for _ in range(100):  # Try 100 times to place the grid
+        for _ in range(max_attempts):
             x = random.randint(margin, canvas_size[0] - grid_width - margin)
             y = random.randint(margin, canvas_size[1] - grid_height - margin)
             
@@ -92,6 +97,11 @@ def place_grids(grids, canvas_size, margin):
                 placed_grids.append(grid)
                 break
         else:
+            # If we couldn't place this grid, try to adjust its size
+            if grid['width'] > 3 and grid['height'] > 3:
+                grid['width'] -= 1
+                grid['height'] -= 1
+                continue
             return False  # Couldn't place all grids
     
     return True

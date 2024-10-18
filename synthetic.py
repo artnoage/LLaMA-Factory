@@ -68,13 +68,13 @@ from complex_questions import (
 )
 
 def generate_datum(data_id):
-    min_num_grids = 4
-    max_num_grids = 7
+    min_num_grids = 2
+    max_num_grids = 5
     min_grid_width = 3
-    max_grid_width = 20
+    max_grid_width = 10
     min_grid_height = 3
-    max_grid_height = 20
-    for attempt in range(10):
+    max_grid_height = 10
+    for attempt in range(20):
         try:
             num_grids = random.randint(min_num_grids, max_num_grids)
             grids = [generate_grid(
@@ -112,12 +112,13 @@ def generate_datum(data_id):
                 count_color_patterns,
                 find_largest_single_color_area
             ]
-            num_simple_questions = random.randint(3, 5)
+            num_simple_questions = random.randint(2, 3)
             num_complex_questions = random.randint(1, 2)
             question_answer_pairs = []
 
             for _ in range(num_simple_questions):
                 func = random.choice(simple_question_functions)
+                qa = None
                 if func == count_color_in_grid:
                     grid_name = random.choice([g['name'] for g in grids])
                     color = random.choice(list(COLOR_MAP.keys()))
@@ -141,44 +142,29 @@ def generate_datum(data_id):
                     qa = func(grids, grid_names[0], grid_names[1])
                 elif func == compare_total_tiles:
                     qa = func(grids)
-                elif func == count_color_in_row:
+                elif func in [count_color_in_row, count_color_in_column]:
                     grid_name = random.choice([g['name'] for g in grids])
                     grid = next(g for g in grids if g['name'] == grid_name)
-                    row_index = random.randint(0, grid['height'] - 1)
+                    index = random.randint(0, grid['height' if func == count_color_in_row else 'width'] - 1)
                     color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, row_index, color)
-                elif func == count_color_in_column:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    grid = next(g for g in grids if g['name'] == grid_name)
-                    column_index = random.randint(0, grid['width'] - 1)
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, column_index, color)
-                elif func == count_rows_with_color:
+                    qa = func(grids, grid_name, index, color)
+                elif func in [count_rows_with_color, count_columns_with_color]:
                     grid_name = random.choice([g['name'] for g in grids])
                     color = random.choice(list(COLOR_MAP.keys()))
                     qa = func(grids, grid_name, color)
-                elif func == count_columns_with_color:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, color)
-                elif func == get_grid_dimensions:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    qa = func(grids, grid_name)
-                elif func == compare_grid_dimensions:
-                    grid_names = random.sample([g['name'] for g in grids], 2)
-                    qa = func(grids, grid_names[0], grid_names[1])
-                elif func == get_grid_dimensions:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    qa = func(grids, grid_name)
-                elif func == compare_grid_dimensions:
-                    grid_names = random.sample([g['name'] for g in grids], 2)
-                    qa = func(grids, grid_names[0], grid_names[1])
+                elif func in [get_grid_dimensions, compare_grid_dimensions]:
+                    grid_names = random.sample([g['name'] for g in grids], 1 if func == get_grid_dimensions else 2)
+                    qa = func(grids, *grid_names)
+                elif func in [count_unique_colors, find_most_common_color, compare_grid_perimeters]:
+                    grid_names = random.sample([g['name'] for g in grids], 1 if func != compare_grid_perimeters else 2)
+                    qa = func(grids, *grid_names)
                 
-                if qa[0] and qa[1]:
+                if qa and qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
 
             for _ in range(num_complex_questions):
                 func = random.choice(complex_question_functions)
+                qa = None
                 if func == rotate_grid_90_clockwise:
                     grid_name = random.choice([g['name'] for g in grids])
                     qa = func(grids, grid_name)
@@ -190,12 +176,15 @@ def generate_datum(data_id):
                     grid_name = random.choice([g['name'] for g in grids])
                     qa = func(grids, grid_name)
                 
-                if qa[0] and qa[1]:
+                if qa and qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
+
+            if not question_answer_pairs:
+                raise Exception("No questions or answers generated.")
 
             meta_question, meta_answer = create_complex_meta_question_and_answer(question_answer_pairs)
             if not meta_question or not meta_answer:
-                raise Exception("No questions or answers generated.")
+                raise Exception("Failed to create meta question and answer.")
 
             for grid in grids:
                 print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}, Tile Size={grid['tile_size']}")
@@ -220,9 +209,9 @@ def generate_datum(data_id):
             print(f"Attempt {attempt + 1}: {e}")
             if max_num_grids > min_num_grids + 1:
                 max_num_grids -= 1
-            if max_grid_width > min_grid_width + 2:
+            if max_grid_width > min_grid_width + 1:
                 max_grid_width -= 1
-            if max_grid_height > min_grid_height + 2:
+            if max_grid_height > min_grid_height + 1:
                 max_grid_height -= 1
     raise Exception("Failed to generate datum after multiple attempts.")
 
