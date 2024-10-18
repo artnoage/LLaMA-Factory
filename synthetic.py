@@ -62,6 +62,10 @@ from questions import (
 )
 from complex_questions import (
     rotate_grid_90_clockwise,
+    rotate_grid_180,
+    rotate_grid_270_clockwise,
+    reflect_grid_horizontally,
+    reflect_grid_vertically,
     count_color_patterns,
     find_largest_single_color_area,
     generate_grid_code,
@@ -110,6 +114,10 @@ def generate_datum(data_id):
             ]
             complex_question_functions = [
                 rotate_grid_90_clockwise,
+                rotate_grid_180,
+                rotate_grid_270_clockwise,
+                reflect_grid_horizontally,
+                reflect_grid_vertically,
                 count_color_patterns,
                 find_largest_single_color_area,
                 generate_grid_code

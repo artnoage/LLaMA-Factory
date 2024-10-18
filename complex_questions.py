@@ -10,6 +10,46 @@ def rotate_grid_90_clockwise(grids, grid_name):
         return question, answer
     return None, None
 
+def rotate_grid_180(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        rotated_array = np.rot90(grid['array'], k=2).tolist()
+        stringified_array = str([[str(color) for color in row] for row in rotated_array])
+        question = f"What is the 180-degree rotation of {grid_name}?"
+        answer = f"The 180-degree rotation of {grid_name} is: {stringified_array}"
+        return question, answer
+    return None, None
+
+def rotate_grid_270_clockwise(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        rotated_array = np.rot90(grid['array'], k=-3).tolist()
+        stringified_array = str([[str(color) for color in row] for row in rotated_array])
+        question = f"What is the 270-degree clockwise rotation of {grid_name}?"
+        answer = f"The 270-degree clockwise rotation of {grid_name} is: {stringified_array}"
+        return question, answer
+    return None, None
+
+def reflect_grid_horizontally(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        reflected_array = np.fliplr(grid['array']).tolist()
+        stringified_array = str([[str(color) for color in row] for row in reflected_array])
+        question = f"What is the horizontal reflection of {grid_name}?"
+        answer = f"The horizontal reflection of {grid_name} is: {stringified_array}"
+        return question, answer
+    return None, None
+
+def reflect_grid_vertically(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        reflected_array = np.flipud(grid['array']).tolist()
+        stringified_array = str([[str(color) for color in row] for row in reflected_array])
+        question = f"What is the vertical reflection of {grid_name}?"
+        answer = f"The vertical reflection of {grid_name} is: {stringified_array}"
+        return question, answer
+    return None, None
+
 def count_color_patterns(grids, grid_name, color1, color2):
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
