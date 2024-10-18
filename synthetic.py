@@ -90,7 +90,9 @@ def generate_datum():
                 count_color_in_row,
                 count_color_in_column,
                 count_rows_with_color,
-                count_columns_with_color
+                count_columns_with_color,
+                get_grid_dimensions,
+                compare_grid_dimensions
             ]
             complex_question_functions = [
                 rotate_grid_90_clockwise,
@@ -146,6 +148,12 @@ def generate_datum():
                     grid_name = random.choice([g['name'] for g in grids])
                     color = random.choice(list(COLOR_MAP.keys()))
                     qa = func(grids, grid_name, color)
+                elif func == get_grid_dimensions:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    qa = func(grids, grid_name)
+                elif func == compare_grid_dimensions:
+                    grid_names = random.sample([g['name'] for g in grids], 2)
+                    qa = func(grids, grid_names[0], grid_names[1])
                 
                 if qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
