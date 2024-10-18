@@ -22,9 +22,10 @@ MIN_TILE_SIZE = 20
 MAX_TILE_SIZE = 60
 
 def calculate_tile_size(width, height):
-    # Calculate tile size based on grid dimensions
-    grid_size = max(width, height)
-    return max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, int(100 / grid_size)))
+    # Calculate tile size based on total number of tiles
+    total_tiles = width * height
+    base_size = int(1200 / np.sqrt(total_tiles))  # 1200 is an arbitrary scaling factor
+    return max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, base_size))
 
 # Function to generate a single grid with variable sizes
 def generate_grid(name, min_width=5, max_width=12, min_height=5, max_height=12):
