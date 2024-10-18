@@ -49,6 +49,8 @@ from questions import (
     count_color_in_column,
     count_rows_with_color,
     count_columns_with_color,
+    get_grid_dimensions,
+    compare_grid_dimensions,
     create_meta_question_and_answer
 )
 from complex_questions import (
