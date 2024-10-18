@@ -56,6 +56,19 @@ def find_largest_single_color_area(grids, grid_name):
         return question, answer
     return None, None
 
+def generate_grid_code(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        array = grid['array'].tolist()
+        code = f"import numpy as np\n\n"
+        code += f"def generate_{grid_name.lower()}():\n"
+        code += f"    return np.array({array})\n"
+        stringified_code = code.replace('\n', '\\n')
+        question = f"What is the code to reproduce the grid {grid_name}?"
+        answer = f"The code to reproduce the grid {grid_name} is: {stringified_code}"
+        return question, answer
+    return None, None
+
 def create_complex_meta_question_and_answer(question_answer_pairs):
     meta_question = "Answer the following questions about the grids: " + " ".join(q for q, a in question_answer_pairs if q)
     meta_answer = " ".join(a for q, a in question_answer_pairs if a)

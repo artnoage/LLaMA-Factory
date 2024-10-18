@@ -64,6 +64,7 @@ from complex_questions import (
     rotate_grid_90_clockwise,
     count_color_patterns,
     find_largest_single_color_area,
+    generate_grid_code,
     create_complex_meta_question_and_answer
 )
 
@@ -110,7 +111,8 @@ def generate_datum(data_id):
             complex_question_functions = [
                 rotate_grid_90_clockwise,
                 count_color_patterns,
-                find_largest_single_color_area
+                find_largest_single_color_area,
+                generate_grid_code
             ]
             num_simple_questions = random.randint(2, 3)
             num_complex_questions = random.randint(1, 2)
