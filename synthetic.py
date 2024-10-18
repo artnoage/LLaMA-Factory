@@ -94,7 +94,10 @@ def generate_datum():
                 count_rows_with_color,
                 count_columns_with_color,
                 get_grid_dimensions,
-                compare_grid_dimensions
+                compare_grid_dimensions,
+                count_unique_colors,
+                find_most_common_color,
+                compare_grid_perimeters
             ]
             complex_question_functions = [
                 rotate_grid_90_clockwise,

@@ -168,6 +168,43 @@ def compare_grid_dimensions(grids, grid_name1, grid_name2):
         return question, answer
     return None, None
 
+def count_unique_colors(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        unique_colors = np.unique(grid['array'])
+        count = len(unique_colors)
+        question = f"How many unique colors are there in {grid_name}?"
+        answer = f"There are {count} unique colors in {grid_name}."
+        return question, answer
+    return None, None
+
+def find_most_common_color(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        unique, counts = np.unique(grid['array'], return_counts=True)
+        most_common = unique[np.argmax(counts)]
+        count = np.max(counts)
+        question = f"What is the most common color in {grid_name}?"
+        answer = f"The most common color in {grid_name} is {most_common}, appearing {count} times."
+        return question, answer
+    return None, None
+
+def compare_grid_perimeters(grids, grid_name1, grid_name2):
+    grid1 = next((g for g in grids if g['name'] == grid_name1), None)
+    grid2 = next((g for g in grids if g['name'] == grid_name2), None)
+    if grid1 and grid2:
+        perimeter1 = 2 * (grid1['width'] + grid1['height'])
+        perimeter2 = 2 * (grid2['width'] + grid2['height'])
+        question = f"Which grid has a larger perimeter: {grid_name1} or {grid_name2}?"
+        if perimeter1 > perimeter2:
+            answer = f"{grid_name1} has a larger perimeter ({perimeter1} units) compared to {grid_name2} ({perimeter2} units)."
+        elif perimeter2 > perimeter1:
+            answer = f"{grid_name2} has a larger perimeter ({perimeter2} units) compared to {grid_name1} ({perimeter1} units)."
+        else:
+            answer = f"Both {grid_name1} and {grid_name2} have the same perimeter ({perimeter1} units)."
+        return question, answer
+    return None, None
+
 def create_meta_question_and_answer(question_answer_pairs):
     meta_question = " ".join(q for q, a in question_answer_pairs if q)
     meta_answer = " ".join(a for q, a in question_answer_pairs if a)
