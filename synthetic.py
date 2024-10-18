@@ -21,11 +21,6 @@ MARGIN = 10  # Reduced margin between grids
 MIN_TILE_SIZE = 15
 MAX_TILE_SIZE = 40
 
-def calculate_tile_size(width, height):
-    # Calculate tile size inversely proportional to grid size
-    grid_size = width * height
-    base_size = int(1600 / grid_size)  # Adjust this factor as needed
-    return max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, base_size))
 
 # Function to generate a single grid with variable sizes
 def generate_grid(name, min_width=3, max_width=8, min_height=3, max_height=8):
@@ -38,7 +33,9 @@ def generate_grid(name, min_width=3, max_width=8, min_height=3, max_height=8):
     height = weighted_random(min_height, max_height)
     
     # Calculate tile size based on grid dimensions
-    tile_size = calculate_tile_size(width, height)
+    total_tiles = width * height
+    base_size = int(400 / np.sqrt(total_tiles))  # Adjust this factor as needed
+    tile_size = max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, base_size))
     
     # Colors and their probabilities
     colors = list(COLOR_MAP.keys())
@@ -74,16 +71,11 @@ def place_grids(grids, max_attempts=10000):
             max_x = CANVAS_SIZE[0] - grid['width'] * grid['tile_size'] - MARGIN
             max_y = CANVAS_SIZE[1] - grid['height'] * grid['tile_size'] - MARGIN
             if max_x <= MARGIN or max_y <= MARGIN:
-                # If the grid is too large, reduce its size
-                if grid['width'] > 3:
-                    grid['width'] -= 1
-                if grid['height'] > 3:
-                    grid['height'] -= 1
-                grid['tile_size'] = calculate_tile_size(grid['width'], grid['height'])
-                continue
+                # If the grid is too large, skip it
+                break
 
-            x = random.randint(MARGIN, int(max_x))
-            y = random.randint(MARGIN, int(max_y))
+            x = random.randint(MARGIN, max(MARGIN, int(max_x)))
+            y = random.randint(MARGIN, max(MARGIN, int(max_y)))
             new_area = (
                 x - MARGIN,
                 y - MARGIN,
