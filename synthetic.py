@@ -123,6 +123,8 @@ from questions import (
     compare_colors_between_grids,
     which_grid_has_most_color,
     is_color_present_in_grid,
+    compare_grid_sizes,
+    compare_total_tiles,
     create_meta_question_and_answer
 )
 from complex_questions import (
