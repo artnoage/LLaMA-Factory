@@ -16,22 +16,22 @@ COLOR_MAP = {
     'Black': (0, 0, 0)  # Represents empty
 }
 
-CANVAS_SIZE = (1200, 1200)  # Canvas size
-MARGIN = 20  # Margin between grids
-MIN_TILE_SIZE = 20
-MAX_TILE_SIZE = 60
+CANVAS_SIZE = (1000, 1000)  # Reduced canvas size
+MARGIN = 10  # Reduced margin between grids
+MIN_TILE_SIZE = 15
+MAX_TILE_SIZE = 40
 
 def calculate_tile_size(width, height):
     # Calculate tile size based on total number of tiles
     total_tiles = width * height
-    base_size = int(1200 / np.sqrt(total_tiles))  # 1200 is an arbitrary scaling factor
+    base_size = int(800 / np.sqrt(total_tiles))  # Reduced scaling factor
     return max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, base_size))
 
 # Function to generate a single grid with variable sizes
-def generate_grid(name, min_width=5, max_width=12, min_height=5, max_height=12):
+def generate_grid(name, min_width=3, max_width=8, min_height=3, max_height=8):
     # Generate random width and height with even higher probability for smaller dimensions
     def weighted_random(min_val, max_val):
-        weights = [1/((i-min_val+1)**4) for i in range(min_val, max_val+1)]
+        weights = [1/((i-min_val+1)**2) for i in range(min_val, max_val+1)]
         return random.choices(range(min_val, max_val+1), weights=weights)[0]
     
     width = weighted_random(min_width, max_width)
@@ -64,7 +64,7 @@ def generate_grid(name, min_width=5, max_width=12, min_height=5, max_height=12):
     }
     return grid
 
-def place_grids(grids, max_attempts=5000):
+def place_grids(grids, max_attempts=10000):
     occupied_areas = []
     for grid in grids:
         placed = False
@@ -74,7 +74,14 @@ def place_grids(grids, max_attempts=5000):
             max_x = CANVAS_SIZE[0] - grid['width'] * grid['tile_size'] - MARGIN
             max_y = CANVAS_SIZE[1] - grid['height'] * grid['tile_size'] - MARGIN
             if max_x <= MARGIN or max_y <= MARGIN:
-                raise Exception(f"{grid['name']} is too large for the canvas with the given margins.")
+                # If the grid is too large, reduce its size
+                if grid['width'] > 3:
+                    grid['width'] -= 1
+                if grid['height'] > 3:
+                    grid['height'] -= 1
+                grid['tile_size'] = calculate_tile_size(grid['width'], grid['height'])
+                continue
+
             x = random.randint(MARGIN, int(max_x))
             y = random.randint(MARGIN, int(max_y))
             new_area = (
@@ -96,7 +103,8 @@ def place_grids(grids, max_attempts=5000):
             attempts += 1
 
         if not placed:
-            raise Exception(f"Could not place {grid['name']} without overlapping after {max_attempts} attempts.")
+            return False  # Indicate failure to place all grids
+    return True  # All grids placed successfully
 
 def render_image(grids):
     canvas = Image.new('RGB', CANVAS_SIZE, (255, 255, 255))
@@ -140,13 +148,13 @@ from questions import (
 )
 
 def generate_datum():
-    min_num_grids = 4
-    max_num_grids = 6
-    min_grid_width = 8
-    max_grid_width = 15
-    min_grid_height = 8
-    max_grid_height = 15
-    for attempt in range(5):  # Increased number of attempts
+    min_num_grids = 3
+    max_num_grids = 5
+    min_grid_width = 3
+    max_grid_width = 8
+    min_grid_height = 3
+    max_grid_height = 8
+    for attempt in range(10):  # Increased number of attempts
         try:
             num_grids = random.randint(min_num_grids, max_num_grids)
             grids = [generate_grid(
@@ -156,7 +164,8 @@ def generate_datum():
                 min_height=min_grid_height,
                 max_height=max_grid_height
                 ) for i in range(num_grids)]
-            place_grids(grids)
+            if not place_grids(grids):
+                raise Exception("Failed to place all grids")
             image = render_image(grids)
 
             question_functions = [
