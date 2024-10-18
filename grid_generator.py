@@ -17,33 +17,44 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     height = random.randint(min_height, max_height)
     tile_size = random.randint(20, 50)
     
-    # Initialize transition matrix
     colors = list(COLOR_MAP.keys())
     n_colors = len(colors)
-    transition_matrix = np.ones((n_colors, n_colors))
     
-    # Increase probability of black and same color
-    black_index = colors.index('Black')
-    for i in range(n_colors):
-        transition_matrix[i, i] = 3  # Higher probability for same color
-        transition_matrix[i, black_index] = 6  # 60% probability for black
+    # Initialize base weights
+    base_weight = {c: 1 for c in colors}
+    base_weight['Black'] = 6  # Higher base weight for black
+    beta = 4  # Influence of neighboring colors
     
-    # Normalize probabilities
-    transition_matrix /= transition_matrix.sum(axis=1, keepdims=True)
+    # Initialize grid
+    grid = np.full((height, width), None, dtype=object)
     
-    # Generate grid
-    grid = np.empty((height, width), dtype=object)
     for i in range(height):
         for j in range(width):
-            if i == 0 and j == 0:
-                grid[i, j] = np.random.choice(colors, p=[0.6 if c == 'Black' else 0.4/(n_colors-1) for c in colors])
-            else:
-                if i > 0:
-                    prev_color = grid[i-1, j]
-                else:
-                    prev_color = grid[i, j-1]
-                prev_index = colors.index(prev_color)
-                grid[i, j] = np.random.choice(colors, p=transition_matrix[prev_index])
+            # Initialize weights with base weights
+            weight = {c: base_weight[c] for c in colors}
+            
+            # Collect neighboring colors
+            neighbors = []
+            if i > 0 and j > 0:
+                neighbors.append(grid[i-1, j-1])
+            if i > 0:
+                neighbors.append(grid[i-1, j])
+            if i > 0 and j < width -1:
+                neighbors.append(grid[i-1, j+1])
+            if j > 0:
+                neighbors.append(grid[i, j-1])
+            
+            # Update weights based on neighboring colors
+            for neighbor_color in neighbors:
+                if neighbor_color is not None:
+                    weight[neighbor_color] += beta
+            
+            # Convert weights to probabilities
+            total_weight = sum(weight.values())
+            probabilities = [weight[c] / total_weight for c in colors]
+            
+            # Select color
+            grid[i, j] = np.random.choice(colors, p=probabilities)
     
     return {
         'name': name,
