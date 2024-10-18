@@ -66,6 +66,7 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
 
 def place_grids(grids, canvas_size, margin):
     placed_grids = []
+    extra_margin = 20  # Additional margin between grids
     for grid in grids:
         grid_width = grid['width'] * grid['tile_size']
         grid_height = grid['height'] * grid['tile_size']
@@ -77,10 +78,11 @@ def place_grids(grids, canvas_size, margin):
             # Check if this position overlaps with any previously placed grid
             overlap = any(
                 rect_overlap(
-                    (x, y, x + grid_width, y + grid_height),
-                    (pg['position'][0], pg['position'][1], 
-                     pg['position'][0] + pg['width'] * pg['tile_size'],
-                     pg['position'][1] + pg['height'] * pg['tile_size'])
+                    (x - extra_margin, y - extra_margin, 
+                     x + grid_width + extra_margin, y + grid_height + extra_margin),
+                    (pg['position'][0] - extra_margin, pg['position'][1] - extra_margin, 
+                     pg['position'][0] + pg['width'] * pg['tile_size'] + extra_margin,
+                     pg['position'][1] + pg['height'] * pg['tile_size'] + extra_margin)
                 )
                 for pg in placed_grids
             )
