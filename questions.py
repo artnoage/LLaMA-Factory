@@ -5,14 +5,14 @@ def count_color_in_grid(grids, grid_name, color):
     if grid:
         count = np.sum(grid['array'] == color)
         question = f"How many {color} tiles are in {grid_name}?"
-        answer = str(count)
+        answer = f"There are {count} {color} tiles in {grid_name}."
         return question, answer
     return None, None
 
 def total_color_in_all_grids(grids, color):
     total_count = sum(np.sum(grid['array'] == color) for grid in grids)
     question = f"How many {color} tiles are there in all grids?"
-    answer = str(total_count)
+    answer = f"There are a total of {total_count} {color} tiles across all grids."
     return question, answer
 
 def compare_colors_between_grids(grids, grid_name1, grid_name2, color):
@@ -24,11 +24,11 @@ def compare_colors_between_grids(grids, grid_name1, grid_name2, color):
         if count1 > count2:
             comparison = "more"
         elif count1 < count2:
-            comparison = "less"
+            comparison = "fewer"
         else:
-            comparison = "an equal number of"
+            comparison = "the same number of"
         question = f"Does {grid_name1} have more {color} tiles than {grid_name2}?"
-        answer = f"{grid_name1} has {comparison} {color} tiles compared to {grid_name2}."
+        answer = f"{grid_name1} has {comparison} {color} tiles compared to {grid_name2}. Specifically, {grid_name1} has {count1} {color} tiles, while {grid_name2} has {count2} {color} tiles."
         return question, answer
     return None, None
 
@@ -42,11 +42,11 @@ def which_grid_has_most_color(grids, color):
             max_grid = grid['name']
     if max_grid:
         question = f"Which grid has the most {color} tiles?"
-        answer = f"{max_grid} has the most {color} tiles."
+        answer = f"{max_grid} has the most {color} tiles with a total of {max_count} {color} tiles."
         return question, answer
     else:
         question = f"Which grid has the most {color} tiles?"
-        answer = f"No grid has any {color} tiles."
+        answer = f"No grid has any {color} tiles. The color {color} is not present in any of the grids."
         return question, answer
 
 def is_color_present_in_grid(grids, grid_name, color):
@@ -54,7 +54,11 @@ def is_color_present_in_grid(grids, grid_name, color):
     if grid:
         present = np.any(grid['array'] == color)
         question = f"Is there any {color} tile in {grid_name}?"
-        answer = "Yes" if present else "No"
+        if present:
+            count = np.sum(grid['array'] == color)
+            answer = f"Yes, there are {color} tiles in {grid_name}. Specifically, there are {count} {color} tiles in this grid."
+        else:
+            answer = f"No, there are no {color} tiles in {grid_name}."
         return question, answer
     return None, None
 
