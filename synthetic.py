@@ -37,18 +37,23 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     tile_size = max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, int(tile_size * noise)))
     
     colors = list(COLOR_MAP.keys())
-    base_probabilities = [0.6 if color == 'Black' else 0.4 / (len(colors) - 1) for color in colors]
+    black_probability = 0.7  # Increased probability for black
+    other_color_probability = (1 - black_probability) / (len(colors) - 1)
+    base_probabilities = [black_probability if color == 'Black' else other_color_probability for color in colors]
     base_probabilities = np.array(base_probabilities)
     base_probabilities /= base_probabilities.sum()
     
     # Create transition matrix for Markov chain
     transition_matrix = np.zeros((len(colors), len(colors)))
+    black_index = colors.index('Black')
     for i in range(len(colors)):
         for j in range(len(colors)):
             if i == j:
-                transition_matrix[i][j] = 0.7  # 70% chance of same color
+                transition_matrix[i][j] = 0.8 if i == black_index else 0.6  # Higher chance of same color, especially for black
+            elif j == black_index:
+                transition_matrix[i][j] = 0.3 if i != black_index else 0.1  # Higher chance of transitioning to black
             else:
-                transition_matrix[i][j] = 0.3 / (len(colors) - 1)  # Distribute remaining 30% equally
+                transition_matrix[i][j] = (1 - transition_matrix[i, i] - transition_matrix[i, black_index]) / (len(colors) - 2)
     
     grid_array = np.empty((height, width), dtype=object)
     for i in range(height):
@@ -56,15 +61,18 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
             if i == 0 and j == 0:
                 grid_array[i][j] = np.random.choice(colors, p=base_probabilities)
             else:
+                prev_colors = []
                 if j > 0:
-                    prev_color = grid_array[i][j-1]
-                elif i > 0:
-                    prev_color = grid_array[i-1][j]
-                else:
-                    prev_color = np.random.choice(colors, p=base_probabilities)
+                    prev_colors.append(grid_array[i][j-1])
+                if i > 0:
+                    prev_colors.append(grid_array[i-1][j])
                 
-                prev_color_index = colors.index(prev_color)
-                grid_array[i][j] = np.random.choice(colors, p=transition_matrix[prev_color_index])
+                if prev_colors:
+                    prev_color = random.choice(prev_colors)
+                    prev_color_index = colors.index(prev_color)
+                    grid_array[i][j] = np.random.choice(colors, p=transition_matrix[prev_color_index])
+                else:
+                    grid_array[i][j] = np.random.choice(colors, p=base_probabilities)
     
     return {
         'name': name,
