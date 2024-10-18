@@ -62,6 +62,30 @@ def is_color_present_in_grid(grids, grid_name, color):
         return question, answer
     return None, None
 
+def compare_grid_sizes(grids, grid_name1, grid_name2):
+    grid1 = next((g for g in grids if g['name'] == grid_name1), None)
+    grid2 = next((g for g in grids if g['name'] == grid_name2), None)
+    if grid1 and grid2:
+        size1 = grid1['width'] * grid1['height']
+        size2 = grid2['width'] * grid2['height']
+        question = f"Which grid is larger in terms of total tiles: {grid_name1} or {grid_name2}?"
+        if size1 > size2:
+            answer = f"{grid_name1} is larger with {size1} tiles, compared to {grid_name2} with {size2} tiles."
+        elif size2 > size1:
+            answer = f"{grid_name2} is larger with {size2} tiles, compared to {grid_name1} with {size1} tiles."
+        else:
+            answer = f"Both {grid_name1} and {grid_name2} have the same number of tiles: {size1}."
+        return question, answer
+    return None, None
+
+def compare_total_tiles(grids):
+    total_tiles = sum(grid['width'] * grid['height'] for grid in grids)
+    largest_grid = max(grids, key=lambda g: g['width'] * g['height'])
+    largest_grid_tiles = largest_grid['width'] * largest_grid['height']
+    question = "How many total tiles are there across all grids, and which grid has the most tiles?"
+    answer = f"There are {total_tiles} tiles in total across all grids. The grid with the most tiles is {largest_grid['name']} with {largest_grid_tiles} tiles."
+    return question, answer
+
 def create_meta_question_and_answer(question_answer_pairs):
     meta_question = " ".join(q for q, a in question_answer_pairs if q)
     meta_answer = " ".join(a for q, a in question_answer_pairs if a)

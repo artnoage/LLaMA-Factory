@@ -158,14 +158,16 @@ def generate_datum():
                 total_color_in_all_grids,
                 compare_colors_between_grids,
                 which_grid_has_most_color,
-                is_color_present_in_grid
+                is_color_present_in_grid,
+                compare_grid_sizes,
+                compare_total_tiles
             ]
             complex_question_functions = [
                 rotate_grid_90_clockwise,
                 count_color_patterns,
                 find_largest_single_color_area
             ]
-            num_simple_questions = random.randint(1, 3)
+            num_simple_questions = random.randint(3, 5)
             num_complex_questions = random.randint(1, 2)
             question_answer_pairs = []
 
@@ -189,6 +191,11 @@ def generate_datum():
                     grid_name = random.choice([g['name'] for g in grids])
                     color = random.choice(list(COLOR_MAP.keys()))
                     qa = func(grids, grid_name, color)
+                elif func == compare_grid_sizes:
+                    grid_names = random.sample([g['name'] for g in grids], 2)
+                    qa = func(grids, grid_names[0], grid_names[1])
+                elif func == compare_total_tiles:
+                    qa = func(grids)
                 
                 if qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
