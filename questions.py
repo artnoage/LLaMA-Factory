@@ -145,6 +145,29 @@ def compare_grid_dimensions(grids, grid_name1, grid_name2):
         return question, answer
     return None, None
 
+def get_grid_dimensions(grids, grid_name):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        question = f"What are the dimensions of {grid_name}?"
+        answer = f"The dimensions of {grid_name} are {grid['width']} columns by {grid['height']} rows."
+        return question, answer
+    return None, None
+
+def compare_grid_dimensions(grids, grid_name1, grid_name2):
+    grid1 = next((g for g in grids if g['name'] == grid_name1), None)
+    grid2 = next((g for g in grids if g['name'] == grid_name2), None)
+    if grid1 and grid2:
+        question = f"How do the dimensions of {grid_name1} compare to {grid_name2}?"
+        answer = f"{grid_name1} is {grid1['width']}x{grid1['height']}, while {grid_name2} is {grid2['width']}x{grid2['height']}."
+        if grid1['width'] * grid1['height'] > grid2['width'] * grid2['height']:
+            answer += f" {grid_name1} has a larger total area."
+        elif grid1['width'] * grid1['height'] < grid2['width'] * grid2['height']:
+            answer += f" {grid_name2} has a larger total area."
+        else:
+            answer += " Both grids have the same total area."
+        return question, answer
+    return None, None
+
 def create_meta_question_and_answer(question_answer_pairs):
     meta_question = " ".join(q for q, a in question_answer_pairs if q)
     meta_answer = " ".join(a for q, a in question_answer_pairs if a)

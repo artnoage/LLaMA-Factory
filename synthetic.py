@@ -156,6 +156,12 @@ def generate_datum():
                 elif func == compare_grid_dimensions:
                     grid_names = random.sample([g['name'] for g in grids], 2)
                     qa = func(grids, grid_names[0], grid_names[1])
+                elif func == get_grid_dimensions:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    qa = func(grids, grid_name)
+                elif func == compare_grid_dimensions:
+                    grid_names = random.sample([g['name'] for g in grids], 2)
+                    qa = func(grids, grid_names[0], grid_names[1])
                 
                 if qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
