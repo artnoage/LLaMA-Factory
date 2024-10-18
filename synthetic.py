@@ -45,6 +45,10 @@ from questions import (
     is_color_present_in_grid,
     compare_grid_sizes,
     compare_total_tiles,
+    count_color_in_row,
+    count_color_in_column,
+    count_rows_with_color,
+    count_columns_with_color,
     create_meta_question_and_answer
 )
 from complex_questions import (
@@ -82,7 +86,11 @@ def generate_datum():
                 which_grid_has_most_color,
                 is_color_present_in_grid,
                 compare_grid_sizes,
-                compare_total_tiles
+                compare_total_tiles,
+                count_color_in_row,
+                count_color_in_column,
+                count_rows_with_color,
+                count_columns_with_color
             ]
             complex_question_functions = [
                 rotate_grid_90_clockwise,
@@ -118,6 +126,26 @@ def generate_datum():
                     qa = func(grids, grid_names[0], grid_names[1])
                 elif func == compare_total_tiles:
                     qa = func(grids)
+                elif func == count_color_in_row:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    grid = next(g for g in grids if g['name'] == grid_name)
+                    row_index = random.randint(0, grid['height'] - 1)
+                    color = random.choice(list(COLOR_MAP.keys()))
+                    qa = func(grids, grid_name, row_index, color)
+                elif func == count_color_in_column:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    grid = next(g for g in grids if g['name'] == grid_name)
+                    column_index = random.randint(0, grid['width'] - 1)
+                    color = random.choice(list(COLOR_MAP.keys()))
+                    qa = func(grids, grid_name, column_index, color)
+                elif func == count_rows_with_color:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    color = random.choice(list(COLOR_MAP.keys()))
+                    qa = func(grids, grid_name, color)
+                elif func == count_columns_with_color:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    color = random.choice(list(COLOR_MAP.keys()))
+                    qa = func(grids, grid_name, color)
                 
                 if qa[0] and qa[1]:
                     question_answer_pairs.append(qa)

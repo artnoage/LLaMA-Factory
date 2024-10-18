@@ -86,6 +86,42 @@ def compare_total_tiles(grids):
     answer = f"There are {total_tiles} tiles in total across all grids. The grid with the most tiles is {largest_grid['name']} with {largest_grid_tiles} tiles."
     return question, answer
 
+def count_color_in_row(grids, grid_name, row_index, color):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid and 0 <= row_index < grid['height']:
+        count = np.sum(grid['array'][row_index] == color)
+        question = f"How many {color} tiles are in row {row_index + 1} of {grid_name}?"
+        answer = f"There are {count} {color} tiles in row {row_index + 1} of {grid_name}."
+        return question, answer
+    return None, None
+
+def count_color_in_column(grids, grid_name, column_index, color):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid and 0 <= column_index < grid['width']:
+        count = np.sum(grid['array'][:, column_index] == color)
+        question = f"How many {color} tiles are in column {column_index + 1} of {grid_name}?"
+        answer = f"There are {count} {color} tiles in column {column_index + 1} of {grid_name}."
+        return question, answer
+    return None, None
+
+def count_rows_with_color(grids, grid_name, color):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        rows_with_color = np.sum(np.any(grid['array'] == color, axis=1))
+        question = f"In how many rows of {grid_name} does the color {color} appear?"
+        answer = f"The color {color} appears in {rows_with_color} rows of {grid_name}."
+        return question, answer
+    return None, None
+
+def count_columns_with_color(grids, grid_name, color):
+    grid = next((g for g in grids if g['name'] == grid_name), None)
+    if grid:
+        columns_with_color = np.sum(np.any(grid['array'] == color, axis=0))
+        question = f"In how many columns of {grid_name} does the color {color} appear?"
+        answer = f"The color {color} appears in {columns_with_color} columns of {grid_name}."
+        return question, answer
+    return None, None
+
 def create_meta_question_and_answer(question_answer_pairs):
     meta_question = " ".join(q for q, a in question_answer_pairs if q)
     meta_answer = " ".join(a for q, a in question_answer_pairs if a)
