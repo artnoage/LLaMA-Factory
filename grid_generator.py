@@ -22,9 +22,11 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     n_colors = len(colors)
     transition_matrix = np.ones((n_colors, n_colors))
     
-    # Increase probability of black
+    # Increase probability of black and same color
     black_index = colors.index('Black')
-    transition_matrix[:, black_index] *= 2
+    for i in range(n_colors):
+        transition_matrix[i, i] = 3  # Higher probability for same color
+        transition_matrix[i, black_index] = 6  # 60% probability for black
     
     # Normalize probabilities
     transition_matrix /= transition_matrix.sum(axis=1, keepdims=True)
@@ -34,7 +36,7 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     for i in range(height):
         for j in range(width):
             if i == 0 and j == 0:
-                grid[i, j] = np.random.choice(colors, p=[0.5 if c == 'Black' else 0.5/(n_colors-1) for c in colors])
+                grid[i, j] = np.random.choice(colors, p=[0.6 if c == 'Black' else 0.4/(n_colors-1) for c in colors])
             else:
                 if i > 0:
                     prev_color = grid[i-1, j]
