@@ -1,11 +1,14 @@
 from PIL import Image, ImageDraw, ImageFont
 import random
+import os
+import json
+import argparse
 from grid_generator import generate_grid, place_grids, COLOR_MAP
 
 CANVAS_SIZE = (1000, 1000)
 MARGIN = 10
 
-def render_image(grids):
+def render_image(grids, image_path):
     # Light gray background color
     background_color = (245, 245, 245)
     canvas = Image.new('RGB', CANVAS_SIZE, background_color)
@@ -34,7 +37,8 @@ def render_image(grids):
                 x1 = x0 + tile_size
                 y1 = y0 + tile_size
                 draw.rectangle([x0, y0, x1, y1], fill=color)
-    return canvas
+    canvas.save(image_path)
+    return image_path
 
 # Import question functions
 from questions import (
@@ -63,7 +67,7 @@ from complex_questions import (
     create_complex_meta_question_and_answer
 )
 
-def generate_datum():
+def generate_datum(data_id):
     min_num_grids = 4
     max_num_grids = 7
     min_grid_width = 3
@@ -82,7 +86,8 @@ def generate_datum():
                 ) for i in range(num_grids)]
             if not place_grids(grids, CANVAS_SIZE, MARGIN):
                 raise Exception("Failed to place all grids")
-            image = render_image(grids)
+            image_path = f'data/arc_data/{data_id}.png'
+            render_image(grids, image_path)
 
             simple_question_functions = [
                 count_color_in_grid,
@@ -195,7 +200,22 @@ def generate_datum():
             for grid in grids:
                 print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}, Tile Size={grid['tile_size']}")
 
-            return image, meta_question, meta_answer
+            data = {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": f"<image>{meta_question}"
+                    },
+                    {
+                        "role": "assistant",
+                        "content": meta_answer
+                    }
+                ],
+                "images": [
+                    image_path
+                ]
+            }
+            return data
         except Exception as e:
             print(f"Attempt {attempt + 1}: {e}")
             if max_num_grids > min_num_grids + 1:
@@ -206,10 +226,32 @@ def generate_datum():
                 max_grid_height -= 1
     raise Exception("Failed to generate datum after multiple attempts.")
 
+def main(n):
+    # Create data directory and subdirectories
+    os.makedirs('data/arc_data', exist_ok=True)
+
+    all_data = []
+
+    for _ in range(n):
+        # Generate a unique identifier for this data point
+        data_id = f"data_{random.randint(1000000, 9999999)}"
+
+        data = generate_datum(data_id)
+        all_data.append(data)
+
+        print(f"Image saved to: {data['images'][0]}")
+        print("Questions and answers generated successfully.")
+        print("---")
+
+    # Save all data to a single JSON file
+    json_path = 'data/arc.json'
+    with open(json_path, 'w') as f:
+        json.dump(all_data, f, indent=2)
+
+    print(f"All data saved to: {json_path}")
+
 if __name__ == "__main__":
-    image, meta_question, meta_answer = generate_datum()
-    image.save('output.png')
-    print("Meta-Question:")
-    print(meta_question)
-    print("\nMeta-Answer:")
-    print(meta_answer)
+    parser = argparse.ArgumentParser(description='Generate grid images and questions.')
+    parser.add_argument('-n', type=int, default=100, help='Number of datapoints to generate (default: 100)')
+    args = parser.parse_args()
+    main(args.n)
