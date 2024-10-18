@@ -125,8 +125,8 @@ from questions import (
 )
 
 def generate_datum():
-    min_num_grids = 3
-    max_num_grids = 5
+    min_num_grids = 4
+    max_num_grids = 7
     min_grid_width = 3
     max_grid_width = 20
     min_grid_height = 3
