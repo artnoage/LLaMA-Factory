@@ -123,6 +123,12 @@ from questions import (
     is_color_present_in_grid,
     create_meta_question_and_answer
 )
+from complex_questions import (
+    rotate_grid_90_clockwise,
+    count_color_patterns,
+    find_largest_single_color_area,
+    create_complex_meta_question_and_answer
+)
 
 def generate_datum():
     min_num_grids = 4
@@ -145,18 +151,24 @@ def generate_datum():
                 raise Exception("Failed to place all grids")
             image = render_image(grids)
 
-            question_functions = [
+            simple_question_functions = [
                 count_color_in_grid,
                 total_color_in_all_grids,
                 compare_colors_between_grids,
                 which_grid_has_most_color,
                 is_color_present_in_grid
             ]
-            num_questions = random.randint(1, 5)
+            complex_question_functions = [
+                rotate_grid_90_clockwise,
+                count_color_patterns,
+                find_largest_single_color_area
+            ]
+            num_simple_questions = random.randint(1, 3)
+            num_complex_questions = random.randint(1, 2)
             question_answer_pairs = []
 
-            for _ in range(num_questions):
-                func = random.choice(question_functions)
+            for _ in range(num_simple_questions):
+                func = random.choice(simple_question_functions)
                 if func == count_color_in_grid:
                     grid_name = random.choice([g['name'] for g in grids])
                     color = random.choice(list(COLOR_MAP.keys()))
@@ -179,7 +191,23 @@ def generate_datum():
                 if qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
 
-            meta_question, meta_answer = create_meta_question_and_answer(question_answer_pairs)
+            for _ in range(num_complex_questions):
+                func = random.choice(complex_question_functions)
+                if func == rotate_grid_90_clockwise:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    qa = func(grids, grid_name)
+                elif func == count_color_patterns:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    colors = random.sample(list(COLOR_MAP.keys()), 2)
+                    qa = func(grids, grid_name, colors[0], colors[1])
+                elif func == find_largest_single_color_area:
+                    grid_name = random.choice([g['name'] for g in grids])
+                    qa = func(grids, grid_name)
+                
+                if qa[0] and qa[1]:
+                    question_answer_pairs.append(qa)
+
+            meta_question, meta_answer = create_complex_meta_question_and_answer(question_answer_pairs)
             if not meta_question or not meta_answer:
                 raise Exception("No questions or answers generated.")
 
