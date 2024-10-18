@@ -18,8 +18,8 @@ COLOR_MAP = {
 
 CANVAS_SIZE = (1200, 1200)  # Canvas size
 MARGIN = 20  # Margin between grids
-MIN_TILE_SIZE = 10
-MAX_TILE_SIZE = 40
+MIN_TILE_SIZE = 20
+MAX_TILE_SIZE = 60
 
 def calculate_tile_size(width, height):
     # Calculate tile size based on grid dimensions
@@ -135,12 +135,12 @@ from questions import (
 )
 
 def generate_datum():
-    min_num_grids = 5
-    max_num_grids = 8
-    min_grid_width = 5
-    max_grid_width = 12
-    min_grid_height = 5
-    max_grid_height = 12
+    min_num_grids = 4
+    max_num_grids = 6
+    min_grid_width = 8
+    max_grid_width = 15
+    min_grid_height = 8
+    max_grid_height = 15
     for attempt in range(5):  # Increased number of attempts
         try:
             num_grids = random.randint(min_num_grids, max_num_grids)
