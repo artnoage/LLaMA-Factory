@@ -16,15 +16,12 @@ COLOR_MAP = {
     'Black': (0, 0, 0)  # Represents empty
 }
 
-CANVAS_SIZE = (1000, 1000)  # Reduced canvas size
-MARGIN = 10  # Reduced margin between grids
-MIN_TILE_SIZE = 15
-MAX_TILE_SIZE = 40
+CANVAS_SIZE = (1000, 1000)
+MARGIN = 10
+MIN_TILE_SIZE = 5
+MAX_TILE_SIZE = 50
 
-
-# Function to generate a single grid with variable sizes
-def generate_grid(name, min_width=3, max_width=8, min_height=3, max_height=8):
-    # Generate random width and height with even higher probability for smaller dimensions
+def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     def weighted_random(min_val, max_val):
         weights = [1/((i-min_val+1)**2) for i in range(min_val, max_val+1)]
         return random.choices(range(min_val, max_val+1), weights=weights)[0]
@@ -32,71 +29,61 @@ def generate_grid(name, min_width=3, max_width=8, min_height=3, max_height=8):
     width = weighted_random(min_width, max_width)
     height = weighted_random(min_height, max_height)
     
-    # Calculate tile size based on grid dimensions
-    total_tiles = width * height
-    base_size = int(400 / np.sqrt(total_tiles))  # Adjust this factor as needed
-    tile_size = max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, base_size))
+    # Calculate tile size inversely proportional to the grid dimensions
+    # Larger grids get smaller tiles
+    max_dimension = max(width, height)
+    tile_size = int(200 / max_dimension)
+    noise = random.uniform(0.8, 1.2)  # Add noise factor
+    tile_size = max(MIN_TILE_SIZE, min(MAX_TILE_SIZE, int(tile_size * noise)))
     
-    # Colors and their probabilities
     colors = list(COLOR_MAP.keys())
-    probabilities = []
-    for color in colors:
-        if color == 'Black':
-            probabilities.append(0.6)  # 60% probability for black tiles
-        else:
-            probabilities.append(0.4 / (len(colors) - 1))  # Evenly distribute the remaining probability
-    # Ensure the probabilities sum to 1
+    probabilities = [0.6 if color == 'Black' else 0.4 / (len(colors) - 1) for color in colors]
     probabilities = np.array(probabilities)
     probabilities /= probabilities.sum()
     
-    # Assign colors to each tile based on the probabilities
     grid_array = np.random.choice(colors, size=(height, width), p=probabilities)
     
-    grid = {
+    return {
         'name': name,
         'width': width,
         'height': height,
         'array': grid_array,
         'tile_size': tile_size
     }
-    return grid
 
 def place_grids(grids, max_attempts=10000):
     occupied_areas = []
     for grid in grids:
         placed = False
         attempts = 0
-
         while not placed and attempts < max_attempts:
-            max_x = CANVAS_SIZE[0] - grid['width'] * grid['tile_size'] - MARGIN
-            max_y = CANVAS_SIZE[1] - grid['height'] * grid['tile_size'] - MARGIN
+            grid_width_in_pixels = grid['width'] * grid['tile_size']
+            grid_height_in_pixels = grid['height'] * grid['tile_size']
+            max_x = CANVAS_SIZE[0] - grid_width_in_pixels - MARGIN
+            max_y = CANVAS_SIZE[1] - grid_height_in_pixels - MARGIN
             if max_x <= MARGIN or max_y <= MARGIN:
-                # If the grid is too large, skip it
                 break
-
-            x = random.randint(MARGIN, max(MARGIN, int(max_x)))
-            y = random.randint(MARGIN, max(MARGIN, int(max_y)))
+            x = random.randint(MARGIN, max_x)
+            y = random.randint(MARGIN, max_y)
             new_area = (
                 x - MARGIN,
                 y - MARGIN,
-                x + grid['width'] * grid['tile_size'] + MARGIN,
-                y + grid['height'] * grid['tile_size'] + MARGIN
+                x + grid_width_in_pixels + MARGIN,
+                y + grid_height_in_pixels + MARGIN
             )
-            overlap = False
-            for area in occupied_areas:
-                if (new_area[0] < area[2] and new_area[2] > area[0] and
-                    new_area[1] < area[3] and new_area[3] > area[1]):
-                    overlap = True
-                    break
+            overlap = any(
+                new_area[0] < area[2] and new_area[2] > area[0] and
+                new_area[1] < area[3] and new_area[3] > area[1]
+                for area in occupied_areas
+            )
             if not overlap:
                 occupied_areas.append(new_area)
                 grid['position'] = (x, y)
                 placed = True
             attempts += 1
-
         if not placed:
-            return False  # Indicate failure to place all grids
-    return True  # All grids placed successfully
+            return False
+    return True
 
 def render_image(grids):
     canvas = Image.new('RGB', CANVAS_SIZE, (255, 255, 255))
@@ -109,7 +96,6 @@ def render_image(grids):
     for grid in grids:
         x_start, y_start = grid['position']
         tile_size = grid['tile_size']
-        # Updated lines using getbbox()
         bbox = font.getbbox(grid['name'])
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
@@ -128,8 +114,7 @@ def render_image(grids):
                 draw.rectangle([x0, y0, x1, y1], fill=color)
     return canvas
 
-# Question methods remain unchanged
-
+# Import question functions
 from questions import (
     count_color_in_grid,
     total_color_in_all_grids,
@@ -143,10 +128,10 @@ def generate_datum():
     min_num_grids = 3
     max_num_grids = 5
     min_grid_width = 3
-    max_grid_width = 8
+    max_grid_width = 20
     min_grid_height = 3
-    max_grid_height = 8
-    for attempt in range(10):  # Increased number of attempts
+    max_grid_height = 20
+    for attempt in range(10):
         try:
             num_grids = random.randint(min_num_grids, max_num_grids)
             grids = [generate_grid(
@@ -190,24 +175,20 @@ def generate_datum():
                     grid_name = random.choice([g['name'] for g in grids])
                     color = random.choice(list(COLOR_MAP.keys()))
                     qa = func(grids, grid_name, color)
-                else:
-                    continue
+                
                 if qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
 
             meta_question, meta_answer = create_meta_question_and_answer(question_answer_pairs)
-            # Ensure questions and answers are not empty
             if not meta_question or not meta_answer:
                 raise Exception("No questions or answers generated.")
 
-            # Optionally, print grid sizes for verification
             for grid in grids:
-                print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}")
+                print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}, Tile Size={grid['tile_size']}")
 
             return image, meta_question, meta_answer
         except Exception as e:
             print(f"Attempt {attempt + 1}: {e}")
-            # Adjust parameters for the next attempt, but keep within desired ranges
             if max_num_grids > min_num_grids + 1:
                 max_num_grids -= 1
             if max_grid_width > min_grid_width + 2:
