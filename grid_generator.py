@@ -2,14 +2,26 @@ import numpy as np
 import random
 
 COLOR_MAP = {
-    'Black': (0, 0, 0),
     'White': (255, 255, 255),
     'Red': (255, 0, 0),
     'Green': (0, 255, 0),
     'Blue': (0, 0, 255),
     'Yellow': (255, 255, 0),
     'Cyan': (0, 255, 255),
-    'Magenta': (255, 0, 255)
+    'Magenta': (255, 0, 255),
+    'Dark Red': (139, 0, 0),
+    'Light Blue': (173, 216, 230),
+    'Orange': (255, 165, 0),
+    'Purple': (128, 0, 128),
+    'Pink': (255, 192, 203),
+    'Brown': (165, 42, 42),
+    'Gray': (128, 128, 128),
+    'Lime': (0, 255, 0),
+    'Teal': (0, 128, 128),
+    'Navy': (0, 0, 128),
+    'Olive': (128, 128, 0),
+    'Maroon': (128, 0, 0),
+    'Turquoise': (64, 224, 208)
 }
 
 def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
