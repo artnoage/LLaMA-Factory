@@ -63,7 +63,8 @@ def generate_grid(name, existing_grids, min_width=3, max_width=20, min_height=3,
                 'height': reference_grid['height'],
                 'tile_size': reference_grid['tile_size'],
                 'array': new_grid,
-                'tag': tag
+                'tag': tag,
+                'relationship_code': relationship.get_code()
             }
     else:
         tag = "random grid"
