@@ -1,6 +1,9 @@
 import numpy as np
 import random
 
+import random
+import numpy as np
+
 def rotate_grid_90_clockwise(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
@@ -12,7 +15,8 @@ def rotate_grid_90_clockwise(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def rotate_grid_180(grids, grid_name):
+def rotate_grid_180(grids):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         rotated_array = np.rot90(grid['array'], k=2).tolist()
@@ -22,7 +26,8 @@ def rotate_grid_180(grids, grid_name):
         return question, answer
     return None, None
 
-def rotate_grid_270_clockwise(grids, grid_name):
+def rotate_grid_270_clockwise(grids):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         rotated_array = np.rot90(grid['array'], k=-3).tolist()
@@ -32,7 +37,8 @@ def rotate_grid_270_clockwise(grids, grid_name):
         return question, answer
     return None, None
 
-def reflect_grid_horizontally(grids, grid_name):
+def reflect_grid_horizontally(grids):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         reflected_array = np.fliplr(grid['array']).tolist()
@@ -42,7 +48,8 @@ def reflect_grid_horizontally(grids, grid_name):
         return question, answer
     return None, None
 
-def reflect_grid_vertically(grids, grid_name):
+def reflect_grid_vertically(grids):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         reflected_array = np.flipud(grid['array']).tolist()
@@ -52,9 +59,11 @@ def reflect_grid_vertically(grids, grid_name):
         return question, answer
     return None, None
 
-def count_color_patterns(grids, grid_name, color1, color2):
+def count_color_patterns(grids, COLOR_MAP):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
+        color1, color2 = random.sample(list(COLOR_MAP.keys()), 2)
         array = grid['array']
         count = 0
         for i in range(array.shape[0]):
@@ -66,7 +75,7 @@ def count_color_patterns(grids, grid_name, color1, color2):
         return question, answer
     return None, None
 
-def find_largest_single_color_area(grids, grid_name):
+def find_largest_single_color_area(grids):
     def dfs(i, j, color, visited):
         if i < 0 or i >= height or j < 0 or j >= width or visited[i][j] or array[i][j] != color:
             return 0
@@ -76,6 +85,7 @@ def find_largest_single_color_area(grids, grid_name):
             area += dfs(i + di, j + dj, color, visited)
         return area
 
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         array = grid['array']
@@ -98,7 +108,8 @@ def find_largest_single_color_area(grids, grid_name):
         return question, answer
     return None, None
 
-def generate_grid_code(grids, grid_name):
+def generate_grid_code(grids):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         array = grid['array'].tolist()
@@ -116,9 +127,11 @@ def create_complex_meta_question_and_answer(question_answer_pairs):
     meta_answer = " ".join(a for q, a in question_answer_pairs if a)
     return meta_question, meta_answer
 
-def count_diagonal_color_pattern(grids, grid_name, color1, color2):
+def count_diagonal_color_pattern(grids, COLOR_MAP):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
+        color1, color2 = random.sample(list(COLOR_MAP.keys()), 2)
         array = grid['array']
         height, width = array.shape
         count = 0
@@ -131,7 +144,9 @@ def count_diagonal_color_pattern(grids, grid_name, color1, color2):
         return question, answer
     return None, None
 
-def calculate_color_density(grids, grid_name, color):
+def calculate_color_density(grids, COLOR_MAP):
+    grid_name = random.choice([g['name'] for g in grids])
+    color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         array = grid['array']
@@ -143,8 +158,7 @@ def calculate_color_density(grids, grid_name, color):
         return question, answer
     return None, None
 
-
-def find_color_islands(grids, grid_name, color):
+def find_color_islands(grids, COLOR_MAP):
     def dfs(i, j, visited):
         if i < 0 or i >= height or j < 0 or j >= width or visited[i][j] or array[i][j] != color:
             return
@@ -152,6 +166,8 @@ def find_color_islands(grids, grid_name, color):
         for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
             dfs(i + di, j + dj, visited)
 
+    grid_name = random.choice([g['name'] for g in grids])
+    color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         array = grid['array']
@@ -170,7 +186,8 @@ def find_color_islands(grids, grid_name, color):
         return question, answer
     return None, None
 
-def analyze_color_distribution(grids, grid_name):
+def analyze_color_distribution(grids):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         array = grid['array']
@@ -197,13 +214,16 @@ def analyze_color_distribution(grids, grid_name):
         return question, answer
     return None, None
 
-def compare_grid_complexity(grids, grid_name1, grid_name2):
+def compare_grid_complexity(grids):
     def count_transitions(grid):
         array = grid['array']
         horizontal = np.sum(array[:, :-1] != array[:, 1:])
         vertical = np.sum(array[:-1, :] != array[1:, :])
         return horizontal + vertical
 
+    if len(grids) < 2:
+        return None, None
+    grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
     grid1 = next((g for g in grids if g['name'] == grid_name1), None)
     grid2 = next((g for g in grids if g['name'] == grid_name2), None)
     if grid1 and grid2:
@@ -219,7 +239,7 @@ def compare_grid_complexity(grids, grid_name1, grid_name2):
         return question, answer
     return None, None
 
-def find_color_path(grids, grid_name, color):
+def find_color_path(grids, COLOR_MAP):
     def dfs(i, j, visited, target):
         if i < 0 or i >= height or j < 0 or j >= width or visited[i][j] or array[i][j] != color:
             return False
@@ -231,6 +251,8 @@ def find_color_path(grids, grid_name, color):
                 return True
         return False
 
+    grid_name = random.choice([g['name'] for g in grids])
+    color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         array = grid['array']
