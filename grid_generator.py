@@ -66,7 +66,7 @@ def generate_grid(name, existing_grids, min_width=3, max_width=20, min_height=3,
                 arg_info = relationship.arg_info
                 new_width = new_grid.shape[1]
                 new_height = new_grid.shape[0]
-                new_tile_size = max(1, reference_grid['tile_size'] // max(new_width // reference_grid['width'], new_height // reference_grid['height']))
+                new_tile_size = random.randint(10, 25)
                 return {
                     'name': name,
                     'width': new_width,
