@@ -4,6 +4,8 @@ import os
 import json
 import argparse
 from grid_generator import generate_grid, place_grids, COLOR_MAP
+from questions import simple_question_functions, create_meta_question_and_answer
+from complex_questions import complex_question_functions
 
 CANVAS_SIZE = (1000, 1000)
 MARGIN = 10
@@ -40,9 +42,7 @@ def render_image(grids, image_path):
     canvas.save(image_path)
     return image_path
 
-# Import question functions
-from questions import simple_question_functions, create_meta_question_and_answer
-from complex_questions import complex_question_functions
+
 
 def generate_datum(data_id):
     while True:  # Keep trying until we succeed
@@ -52,7 +52,7 @@ def generate_datum(data_id):
         max_grid_width = 20
         min_grid_height = 2
         max_grid_height = 20
-        for attempt in range(20):
+        for attempt in range(30):
             try:
                 num_grids = random.randint(min_num_grids, max_num_grids)
                 grids = [generate_grid(
