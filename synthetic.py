@@ -74,13 +74,13 @@ def generate_datum(data_id):
 
                 for _ in range(num_simple_questions):
                     func = random.choice(simple_question_functions)
-                    qa = func(grids, COLOR_MAP)
+                    qa = func(grids)
                     if qa and qa[0] and qa[1]:
                         question_answer_pairs.append(qa)
 
                 for _ in range(num_complex_questions):
                     func = random.choice(complex_question_functions)
-                    qa = func(grids, COLOR_MAP)
+                    qa = func(grids)
                     if qa and qa[0] and qa[1]:
                         question_answer_pairs.append(qa)
 

@@ -2,7 +2,7 @@ import random
 import numpy as np
 from color_map import COLOR_MAP
 
-def count_color_in_grid(grids, COLOR_MAP):
+def count_color_in_grid(grids):
     grid_name = random.choice([g['name'] for g in grids])
     color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
@@ -17,7 +17,7 @@ def count_color_in_grid(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def total_color_in_all_grids(grids, COLOR_MAP):
+def total_color_in_all_grids(grids):
     color = random.choice(list(COLOR_MAP.keys()))
     total_count = sum(np.sum(grid['array'] == color) for grid in grids)
     if color == 'Empty':
@@ -28,7 +28,7 @@ def total_color_in_all_grids(grids, COLOR_MAP):
         answer = f"There are a total of {total_count} {color} tiles across all grids."
     return question, answer
 
-def compare_colors_between_grids(grids, COLOR_MAP):
+def compare_colors_between_grids(grids):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
@@ -53,7 +53,7 @@ def compare_colors_between_grids(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def which_grid_has_most_color(grids, COLOR_MAP):
+def which_grid_has_most_color(grids):
     color = random.choice(list(COLOR_MAP.keys()))
     max_count = -1
     max_grid = None
@@ -79,7 +79,7 @@ def which_grid_has_most_color(grids, COLOR_MAP):
             answer = f"No grid has any {color} tiles. The color {color} is not present in any of the grids."
         return question, answer
 
-def is_color_present_in_grid(grids, COLOR_MAP):
+def is_color_present_in_grid(grids):
     grid_name = random.choice([g['name'] for g in grids])
     color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
@@ -103,7 +103,7 @@ def is_color_present_in_grid(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def compare_grid_sizes(grids, COLOR_MAP):
+def compare_grid_sizes(grids):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
@@ -122,7 +122,7 @@ def compare_grid_sizes(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def compare_total_tiles(grids, COLOR_MAP):
+def compare_total_tiles(grids):
     total_tiles = sum(grid['width'] * grid['height'] for grid in grids)
     largest_grid = max(grids, key=lambda g: g['width'] * g['height'])
     largest_grid_tiles = largest_grid['width'] * largest_grid['height']
@@ -130,7 +130,7 @@ def compare_total_tiles(grids, COLOR_MAP):
     answer = f"There are {total_tiles} tiles in total across all grids. The grid with the most tiles is {largest_grid['name']} with {largest_grid_tiles} tiles."
     return question, answer
 
-def count_color_in_row(grids, COLOR_MAP):
+def count_color_in_row(grids):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -142,7 +142,7 @@ def count_color_in_row(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def count_color_in_column(grids, COLOR_MAP):
+def count_color_in_column(grids):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -154,7 +154,7 @@ def count_color_in_column(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def count_rows_with_color(grids, COLOR_MAP):
+def count_rows_with_color(grids):
     grid_name = random.choice([g['name'] for g in grids])
     color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
@@ -165,7 +165,7 @@ def count_rows_with_color(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def count_columns_with_color(grids, COLOR_MAP):
+def count_columns_with_color(grids):
     grid_name = random.choice([g['name'] for g in grids])
     color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
@@ -176,7 +176,7 @@ def count_columns_with_color(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def get_grid_dimensions(grids, COLOR_MAP):
+def get_grid_dimensions(grids):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -185,7 +185,7 @@ def get_grid_dimensions(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def compare_grid_dimensions(grids, COLOR_MAP):
+def compare_grid_dimensions(grids):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
@@ -205,7 +205,7 @@ def compare_grid_dimensions(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def count_unique_colors(grids, COLOR_MAP):
+def count_unique_colors(grids):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -216,7 +216,7 @@ def count_unique_colors(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def find_most_common_color(grids, COLOR_MAP):
+def find_most_common_color(grids):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -228,7 +228,7 @@ def find_most_common_color(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def compare_grid_perimeters(grids, COLOR_MAP):
+def compare_grid_perimeters(grids):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
