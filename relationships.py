@@ -12,6 +12,9 @@ class Relationship:
     def get_code(self, arg_info=None):
         raise NotImplementedError("Subclasses must implement this method")
 
+    def can_apply(self, grid):
+        return True
+
 class ColorSwapRelationship(Relationship):
     def __init__(self):
         self.color1, self.color2 = random.sample(list(COLOR_MAP.keys()), k=2)
@@ -158,6 +161,8 @@ class FractalGridRelationship(Relationship):
         return "Replace each tile with a copy of the original grid or a black mini-grid if the tile is empty."
 
     def apply(self, grid):
+        if not self.can_apply(grid):
+            return "reject"
         height, width = grid.shape
         new_grid = np.empty((height * height, width * width), dtype=object)
         
@@ -173,6 +178,8 @@ class FractalGridRelationship(Relationship):
     def get_code(self, arg_info=None):
         return """
 def apply(grid):
+    if grid.size > 20:
+        return "reject"
     height, width = grid.shape
     new_grid = np.empty((height * height, width * width), dtype=object)
     
@@ -185,6 +192,9 @@ def apply(grid):
     
     return new_grid
 """
+
+    def can_apply(self, grid):
+        return grid.size <= 20
 
 def get_random_relationship():
     return random.choice([ColorSwapRelationship(), ColorFillRelationship(), ColorBorderRelationship(),
