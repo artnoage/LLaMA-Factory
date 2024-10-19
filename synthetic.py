@@ -106,64 +106,13 @@ def generate_datum(data_id):
 
             for _ in range(num_simple_questions):
                 func = random.choice(simple_question_functions)
-                qa = None
-                if func == count_color_in_grid:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, color)
-                elif func == total_color_in_all_grids:
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, color)
-                elif func == compare_colors_between_grids:
-                    grid_names = random.sample([g['name'] for g in grids], 2)
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_names[0], grid_names[1], color)
-                elif func == which_grid_has_most_color:
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, color)
-                elif func == is_color_present_in_grid:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, color)
-                elif func == compare_grid_sizes:
-                    grid_names = random.sample([g['name'] for g in grids], 2)
-                    qa = func(grids, grid_names[0], grid_names[1])
-                elif func == compare_total_tiles:
-                    qa = func(grids)
-                elif func in [count_color_in_row, count_color_in_column]:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    grid = next(g for g in grids if g['name'] == grid_name)
-                    index = random.randint(0, grid['height' if func == count_color_in_row else 'width'] - 1)
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, index, color)
-                elif func in [count_rows_with_color, count_columns_with_color]:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    color = random.choice(list(COLOR_MAP.keys()))
-                    qa = func(grids, grid_name, color)
-                elif func in [get_grid_dimensions, compare_grid_dimensions]:
-                    grid_names = random.sample([g['name'] for g in grids], 1 if func == get_grid_dimensions else 2)
-                    qa = func(grids, *grid_names)
-                elif func in [count_unique_colors, find_most_common_color, compare_grid_perimeters]:
-                    grid_names = random.sample([g['name'] for g in grids], 1 if func != compare_grid_perimeters else 2)
-                    qa = func(grids, *grid_names)
-                
+                qa = func(grids, COLOR_MAP)
                 if qa and qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
 
             for _ in range(num_complex_questions):
                 func = random.choice(complex_question_functions)
-                qa = None
-                if func == rotate_grid_90_clockwise:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    qa = func(grids, grid_name)
-                elif func == count_color_patterns:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    colors = random.sample(list(COLOR_MAP.keys()), 2)
-                    qa = func(grids, grid_name, colors[0], colors[1])
-                elif func == find_largest_single_color_area:
-                    grid_name = random.choice([g['name'] for g in grids])
-                    qa = func(grids, grid_name)
-                
+                qa = func(grids, COLOR_MAP)
                 if qa and qa[0] and qa[1]:
                     question_answer_pairs.append(qa)
 

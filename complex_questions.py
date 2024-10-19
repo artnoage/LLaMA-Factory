@@ -1,6 +1,8 @@
 import numpy as np
+import random
 
-def rotate_grid_90_clockwise(grids, grid_name):
+def rotate_grid_90_clockwise(grids, COLOR_MAP):
+    grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         rotated_array = np.rot90(grid['array'], k=-1).tolist()

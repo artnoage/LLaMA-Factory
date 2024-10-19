@@ -1,6 +1,9 @@
 import numpy as np
+import random
 
-def count_color_in_grid(grids, grid_name, color):
+def count_color_in_grid(grids, COLOR_MAP):
+    grid_name = random.choice([g['name'] for g in grids])
+    color = random.choice(list(COLOR_MAP.keys()))
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         count = np.sum(grid['array'] == color)
