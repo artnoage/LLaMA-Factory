@@ -150,6 +150,42 @@ def apply(grid):
     return grid
 """
 
+class FractalGridRelationship(Relationship):
+    def __init__(self):
+        self.arg_info = {}
+
+    def get_description(self):
+        return "Replace each tile with a copy of the original grid or a black mini-grid if the tile is empty."
+
+    def apply(self, grid):
+        height, width = grid.shape
+        new_grid = np.empty((height * height, width * width), dtype=object)
+        
+        for i in range(height):
+            for j in range(width):
+                if grid[i, j] == 'Empty':
+                    new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = 'Empty'
+                else:
+                    new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = grid
+        
+        return new_grid
+
+    def get_code(self, arg_info=None):
+        return """
+def apply(grid):
+    height, width = grid.shape
+    new_grid = np.empty((height * height, width * width), dtype=object)
+    
+    for i in range(height):
+        for j in range(width):
+            if grid[i, j] == 'Empty':
+                new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = 'Empty'
+            else:
+                new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = grid
+    
+    return new_grid
+"""
+
 def get_random_relationship():
     return random.choice([ColorSwapRelationship(), ColorFillRelationship(), ColorBorderRelationship(),
-                          ChangeRowRelationship(), ChangeColumnRelationship()])
+                          ChangeRowRelationship(), ChangeColumnRelationship(), FractalGridRelationship()])
