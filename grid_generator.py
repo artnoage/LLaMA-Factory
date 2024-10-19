@@ -12,7 +12,7 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
     
     # Initialize base weights
     base_weight = {c: 1 for c in colors}
-    base_weight['Black'] = 6  # Higher base weight for black
+    base_weight['Empty'] = 6  # Higher base weight for empty tiles
     beta = 4  # Influence of neighboring colors
     
     # Initialize grid

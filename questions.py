@@ -8,8 +8,12 @@ def count_color_in_grid(grids, COLOR_MAP):
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         count = np.sum(grid['array'] == color)
-        question = f"How many {color} tiles are in {grid_name}?"
-        answer = f"There are {count} {color} tiles in {grid_name}."
+        if color == 'Empty':
+            question = f"How many empty tiles are in {grid_name}?"
+            answer = f"There are {count} empty tiles in {grid_name}."
+        else:
+            question = f"How many {color} tiles are in {grid_name}?"
+            answer = f"There are {count} {color} tiles in {grid_name}."
         return question, answer
     return None, None
 
@@ -65,12 +69,21 @@ def is_color_present_in_grid(grids, COLOR_MAP):
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
         present = np.any(grid['array'] == color)
-        question = f"Is there any {color} tile in {grid_name}?"
+        if color == 'Empty':
+            question = f"Are there any empty tiles in {grid_name}?"
+        else:
+            question = f"Is there any {color} tile in {grid_name}?"
         if present:
             count = np.sum(grid['array'] == color)
-            answer = f"Yes, there are {color} tiles in {grid_name}. Specifically, there are {count} {color} tiles in this grid."
+            if color == 'Empty':
+                answer = f"Yes, there are empty tiles in {grid_name}. Specifically, there are {count} empty tiles in this grid."
+            else:
+                answer = f"Yes, there are {color} tiles in {grid_name}. Specifically, there are {count} {color} tiles in this grid."
         else:
-            answer = f"No, there are no {color} tiles in {grid_name}."
+            if color == 'Empty':
+                answer = f"No, there are no empty tiles in {grid_name}."
+            else:
+                answer = f"No, there are no {color} tiles in {grid_name}."
         return question, answer
     return None, None
 

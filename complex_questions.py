@@ -101,8 +101,12 @@ def find_largest_single_color_area(grids, COLOR_MAP):
                         max_area = area
                         max_color = color
 
-        question = f"What is the largest contiguous area of a single color in {grid_name}, and what color is it?"
-        answer = f"The largest contiguous area in {grid_name} is {max_area} tiles of {max_color}."
+        if max_color == 'Empty':
+            question = f"What is the largest contiguous area of empty tiles in {grid_name}?"
+            answer = f"The largest contiguous area of empty tiles in {grid_name} is {max_area} tiles."
+        else:
+            question = f"What is the largest contiguous area of a single color in {grid_name}, and what color is it?"
+            answer = f"The largest contiguous area in {grid_name} is {max_area} tiles of {max_color}."
         return question, answer
     return None, None
 

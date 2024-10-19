@@ -18,5 +18,6 @@ COLOR_MAP = {
     'Navy': (0, 0, 128),
     'Olive': (128, 128, 0),
     'Maroon': (128, 0, 0),
-    'Turquoise': (64, 224, 208)
+    'Turquoise': (64, 224, 208),
+    'Empty': (0, 0, 0)  # Same as black background
 }
