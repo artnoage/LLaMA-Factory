@@ -57,7 +57,7 @@ def generate_grid(name, existing_grids, min_width=3, max_width=20, min_height=3,
             'name': relational_name,
             'width': reference_grid['width'],
             'height': reference_grid['height'],
-            'tile_size': tile_size,
+            'tile_size': reference_grid['tile_size'],
             'array': new_grid,
             'tag': tag
         }
