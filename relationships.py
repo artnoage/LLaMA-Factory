@@ -100,5 +100,56 @@ def apply(grid):
     return grid
 """
 
+class ChangeRowRelationship(Relationship):
+    def __init__(self):
+        self.row_index = None  # Will be set in apply()
+        self.new_color = random.choice(list(COLOR_MAP.keys()))
+        self.arg_info = {"new_color": self.new_color}
+
+    def get_description(self):
+        return f"Change a whole row to {self.new_color}."
+
+    def apply(self, grid):
+        height, width = grid.shape
+        self.row_index = random.randint(0, height - 1)
+        grid[self.row_index, :] = self.new_color
+        self.arg_info["row_index"] = self.row_index
+        return grid
+
+    def get_code(self, arg_info=None):
+        if arg_info is None:
+            arg_info = self.arg_info
+        return f"""
+def apply(grid):
+    grid[{arg_info['row_index']}, :] = '{arg_info['new_color']}'
+    return grid
+"""
+
+class ChangeColumnRelationship(Relationship):
+    def __init__(self):
+        self.column_index = None  # Will be set in apply()
+        self.new_color = random.choice(list(COLOR_MAP.keys()))
+        self.arg_info = {"new_color": self.new_color}
+
+    def get_description(self):
+        return f"Change a whole column to {self.new_color}."
+
+    def apply(self, grid):
+        height, width = grid.shape
+        self.column_index = random.randint(0, width - 1)
+        grid[:, self.column_index] = self.new_color
+        self.arg_info["column_index"] = self.column_index
+        return grid
+
+    def get_code(self, arg_info=None):
+        if arg_info is None:
+            arg_info = self.arg_info
+        return f"""
+def apply(grid):
+    grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
+    return grid
+"""
+
 def get_random_relationship():
-    return random.choice([ColorSwapRelationship(), ColorFillRelationship(), ColorBorderRelationship()])
+    return random.choice([ColorSwapRelationship(), ColorFillRelationship(), ColorBorderRelationship(),
+                          ChangeRowRelationship(), ChangeColumnRelationship()])
