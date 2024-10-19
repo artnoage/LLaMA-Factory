@@ -4,8 +4,10 @@ from color_map import COLOR_MAP
 from relationships import get_random_relationship
 
 def generate_grid(name, existing_grids, min_width=3, max_width=20, min_height=3, max_height=20):
-    width = random.randint(min_width, max_width)
-    height = random.randint(min_height, max_height)
+    # Use exponential distribution to favor smaller dimensions
+    lambda_param = 0.3  # Adjust this value to control the distribution
+    width = min(int(random.expovariate(lambda_param)) + min_width, max_width)
+    height = min(int(random.expovariate(lambda_param)) + min_height, max_height)
     tile_size = random.randint(10, 25)  # Reduced tile size to accommodate potentially larger grids
     
     colors = list(COLOR_MAP.keys())
