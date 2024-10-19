@@ -168,7 +168,7 @@ class FractalGridRelationship(Relationship):
         
         for i in range(height):
             for j in range(width):
-                if grid[i, j] == 'Empty':
+                if np.all(grid[i, j] == 'Empty'):
                     new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = 'Empty'
                 else:
                     new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = grid
@@ -185,7 +185,7 @@ def apply(grid):
     
     for i in range(height):
         for j in range(width):
-            if grid[i, j] == 'Empty':
+            if np.all(grid[i, j] == 'Empty'):
                 new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = 'Empty'
             else:
                 new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = grid
