@@ -41,7 +41,7 @@ def render_image(grids, image_path):
     return image_path
 
 # Import question functions
-from questions import simple_question_functions
+from questions import simple_question_functions, create_meta_question_and_answer
 from complex_questions import complex_question_functions
 
 def generate_datum(data_id):
@@ -85,7 +85,7 @@ def generate_datum(data_id):
             if not question_answer_pairs:
                 raise Exception("No questions or answers generated.")
 
-            meta_question, meta_answer = create_complex_meta_question_and_answer(question_answer_pairs)
+            meta_question, meta_answer = create_meta_question_and_answer(question_answer_pairs)
             if not meta_question or not meta_answer:
                 raise Exception("Failed to create meta question and answer.")
 

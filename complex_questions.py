@@ -1,23 +1,6 @@
 import numpy as np
 import random
 
-complex_question_functions = [
-    rotate_grid_90_clockwise,
-    rotate_grid_180,
-    rotate_grid_270_clockwise,
-    reflect_grid_horizontally,
-    reflect_grid_vertically,
-    count_color_patterns,
-    find_largest_single_color_area,
-    generate_grid_code,
-    count_diagonal_color_pattern,
-    calculate_color_density,
-    find_color_islands,
-    analyze_color_distribution,
-    compare_grid_complexity,
-    find_color_path
-]
-
 def rotate_grid_90_clockwise(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
@@ -272,3 +255,20 @@ def find_color_path(grids, grid_name, color):
             answer = f"No, there is no continuous path of {color} from left to right or top to bottom in {grid_name}."
         return question, answer
     return None, None
+
+complex_question_functions = [
+    rotate_grid_90_clockwise,
+    rotate_grid_180,
+    rotate_grid_270_clockwise,
+    reflect_grid_horizontally,
+    reflect_grid_vertically,
+    count_color_patterns,
+    find_largest_single_color_area,
+    generate_grid_code,
+    count_diagonal_color_pattern,
+    calculate_color_density,
+    find_color_islands,
+    analyze_color_distribution,
+    compare_grid_complexity,
+    find_color_path
+]
