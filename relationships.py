@@ -40,8 +40,7 @@ def apply(grid):
         grid[grid == '{arg_info['color1']}'] = 'temp'
         grid[grid == '{arg_info['color2']}'] = '{arg_info['color1']}'
         grid[grid == 'temp'] = '{arg_info['color2']}'
-        return grid
-    return "reject"
+    return grid
 """
 
 class ColorBorderRelationship(Relationship):
@@ -70,17 +69,15 @@ class ColorBorderRelationship(Relationship):
             arg_info = self.arg_info
         return f"""
 def apply(grid):
-    if np.any(grid == '{arg_info['inner_color']}'):
-        height, width = grid.shape
-        for i in range(height):
-            for j in range(width):
-                if grid[i, j] == '{arg_info['inner_color']}':
-                    for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
-                        ni, nj = i + di, j + dj
-                        if 0 <= ni < height and 0 <= nj < width and grid[ni, nj] != '{arg_info['inner_color']}':
-                            grid[ni, nj] = '{arg_info['border_color']}'
-        return grid
-    return "reject"
+    height, width = grid.shape
+    for i in range(height):
+        for j in range(width):
+            if grid[i, j] == '{arg_info['inner_color']}':
+                for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
+                    ni, nj = i + di, j + dj
+                    if 0 <= ni < height and 0 <= nj < width and grid[ni, nj] != '{arg_info['inner_color']}':
+                        grid[ni, nj] = '{arg_info['border_color']}'
+    return grid
 """
 
 class ChangeRowRelationship(Relationship):
@@ -134,10 +131,12 @@ class ChangeColumnRelationship(Relationship):
     def get_code(self, arg_info=None):
         if arg_info is None:
             arg_info = self.arg_info
-        return f"""def apply(grid):
-                height, width = grid.shape
-                grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
-                return grid"""
+        return f"""
+def apply(grid):
+    height, width = grid.shape
+    grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
+    return grid
+"""
 
 class FractalGridRelationship(Relationship):
     def __init__(self):
@@ -170,7 +169,6 @@ def apply(grid):
     
     for i in range(height):
         for j in range(width):
-            # This condition will trigger the error
             if grid[i, j] == 'Empty':
                 new_grid[i*height:(i+1)*height, j*width:(j+1)*width] = 'Empty'
             else:
