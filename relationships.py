@@ -80,23 +80,21 @@ def apply(grid):
     return grid
 """
 
-class ChangeRowRelationship(Relationship):
+class ReplaceRowIfColorPresent(Relationship):
     def __init__(self):
-        self.row_index = None  # Will be set in apply()
+        self.target_color = random.choice(list(COLOR_MAP.keys()))
         self.new_color = random.choice(list(COLOR_MAP.keys()))
-        self.arg_info = {"new_color": self.new_color}
+        self.arg_info = {"target_color": self.target_color, "new_color": self.new_color}
 
     def get_description(self):
-        return f"If the grid has at least one row, change a whole row to {self.new_color}. Otherwise, return the original grid."
+        return f"If {self.target_color} is present in any row, replace the entire row with {self.new_color}."
 
     def apply(self, grid):
         height, width = grid.shape
-        if height > 0:
-            self.row_index = random.randint(0, height - 1)
-            grid[self.row_index, :] = self.new_color
-            self.arg_info["row_index"] = self.row_index
-            return grid
-        return "reject"
+        for i in range(height):
+            if self.target_color in grid[i, :]:
+                grid[i, :] = self.new_color
+        return grid
 
     def get_code(self, arg_info=None):
         if arg_info is None:
@@ -104,29 +102,27 @@ class ChangeRowRelationship(Relationship):
         return f"""
 def apply(grid):
     height, width = grid.shape
-    if height > 0:
-        grid[{arg_info['row_index']}, :] = '{arg_info['new_color']}'
-        return grid
-    return "reject"
+    for i in range(height):
+        if '{arg_info['target_color']}' in grid[i, :]:
+            grid[i, :] = '{arg_info['new_color']}'
+    return grid
 """
 
-class ChangeColumnRelationship(Relationship):
+class ReplaceColumnIfColorPresent(Relationship):
     def __init__(self):
-        self.column_index = None  # Will be set in apply()
+        self.target_color = random.choice(list(COLOR_MAP.keys()))
         self.new_color = random.choice(list(COLOR_MAP.keys()))
-        self.arg_info = {"new_color": self.new_color}
+        self.arg_info = {"target_color": self.target_color, "new_color": self.new_color}
 
     def get_description(self):
-        return f"If the grid has at least one column, change a whole column to {self.new_color}. Otherwise, return the original grid."
+        return f"If {self.target_color} is present in any column, replace the entire column with {self.new_color}."
 
     def apply(self, grid):
         height, width = grid.shape
-        if width > 0:
-            self.column_index = random.randint(0, width - 1)
-            grid[:, self.column_index] = self.new_color
-            self.arg_info["column_index"] = self.column_index
-            return grid
-        return "reject"
+        for j in range(width):
+            if self.target_color in grid[:, j]:
+                grid[:, j] = self.new_color
+        return grid
 
     def get_code(self, arg_info=None):
         if arg_info is None:
@@ -134,7 +130,9 @@ class ChangeColumnRelationship(Relationship):
         return f"""
 def apply(grid):
     height, width = grid.shape
-    grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
+    for j in range(width):
+        if '{arg_info['target_color']}' in grid[:, j]:
+            grid[:, j] = '{arg_info['new_color']}'
     return grid
 """
 
@@ -181,5 +179,5 @@ def apply(grid):
         return grid.size <= 20
 
 def get_random_relationship():
-    return random.choice([ColorSwapRelationship(),  ColorBorderRelationship(),
-                          ChangeRowRelationship(), ChangeColumnRelationship(), FractalGridRelationship()])
+    return random.choice([ColorSwapRelationship(), ColorBorderRelationship(),
+                          ReplaceRowIfColorPresent(), ReplaceColumnIfColorPresent(), FractalGridRelationship()])
