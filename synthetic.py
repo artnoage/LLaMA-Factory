@@ -95,7 +95,6 @@ def generate_datum(data_id):
                 generate_grid_code,
                 count_diagonal_color_pattern,
                 calculate_color_density,
-                compare_grid_perimeter_colors,
                 find_color_islands,
                 analyze_color_distribution,
                 compare_grid_complexity,
