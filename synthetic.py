@@ -45,78 +45,79 @@ from questions import simple_question_functions, create_meta_question_and_answer
 from complex_questions import complex_question_functions
 
 def generate_datum(data_id):
-    min_num_grids = 3
-    max_num_grids = 8
-    min_grid_width = 2
-    max_grid_width = 20
-    min_grid_height = 2
-    max_grid_height = 20
-    for attempt in range(20):
-        try:
-            num_grids = random.randint(min_num_grids, max_num_grids)
-            grids = [generate_grid(
-                f"Grid_{i+1}",
-                min_width=min_grid_width,
-                max_width=max_grid_width,
-                min_height=min_grid_height,
-                max_height=max_grid_height
-                ) for i in range(num_grids)]
-            if not place_grids(grids, CANVAS_SIZE, MARGIN):
-                raise Exception("Failed to place all grids")
-            image_path = f'data/arc_data/{data_id}.png'
-            render_image(grids, image_path)
+    while True:  # Keep trying until we succeed
+        min_num_grids = 3
+        max_num_grids = 8
+        min_grid_width = 2
+        max_grid_width = 20
+        min_grid_height = 2
+        max_grid_height = 20
+        for attempt in range(20):
+            try:
+                num_grids = random.randint(min_num_grids, max_num_grids)
+                grids = [generate_grid(
+                    f"Grid_{i+1}",
+                    min_width=min_grid_width,
+                    max_width=max_grid_width,
+                    min_height=min_grid_height,
+                    max_height=max_grid_height
+                    ) for i in range(num_grids)]
+                if not place_grids(grids, CANVAS_SIZE, MARGIN):
+                    raise Exception("Failed to place all grids")
+                image_path = f'data/arc_data/{data_id}.png'
+                render_image(grids, image_path)
 
-            num_simple_questions = random.randint(2, 3)
-            num_complex_questions = random.randint(1, 2)
-            question_answer_pairs = []
+                num_simple_questions = random.randint(2, 3)
+                num_complex_questions = random.randint(1, 2)
+                question_answer_pairs = []
 
-            for _ in range(num_simple_questions):
-                func = random.choice(simple_question_functions)
-                qa = func(grids, COLOR_MAP)
-                if qa and qa[0] and qa[1]:
-                    question_answer_pairs.append(qa)
+                for _ in range(num_simple_questions):
+                    func = random.choice(simple_question_functions)
+                    qa = func(grids, COLOR_MAP)
+                    if qa and qa[0] and qa[1]:
+                        question_answer_pairs.append(qa)
 
-            for _ in range(num_complex_questions):
-                func = random.choice(complex_question_functions)
-                qa = func(grids, COLOR_MAP)
-                if qa and qa[0] and qa[1]:
-                    question_answer_pairs.append(qa)
+                for _ in range(num_complex_questions):
+                    func = random.choice(complex_question_functions)
+                    qa = func(grids, COLOR_MAP)
+                    if qa and qa[0] and qa[1]:
+                        question_answer_pairs.append(qa)
 
-            if not question_answer_pairs:
-                raise Exception("No questions or answers generated.")
+                if not question_answer_pairs:
+                    raise Exception("No questions or answers generated.")
 
-            meta_question, meta_answer = create_meta_question_and_answer(question_answer_pairs)
-            if not meta_question or not meta_answer:
-                raise Exception("Failed to create meta question and answer.")
+                meta_question, meta_answer = create_meta_question_and_answer(question_answer_pairs)
+                if not meta_question or not meta_answer:
+                    raise Exception("Failed to create meta question and answer.")
 
-            for grid in grids:
-                print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}, Tile Size={grid['tile_size']}")
+                for grid in grids:
+                    print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}, Tile Size={grid['tile_size']}")
 
-            data = {
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": f"<image>{meta_question}"
-                    },
-                    {
-                        "role": "assistant",
-                        "content": meta_answer
-                    }
-                ],
-                "images": [
-                    image_path
-                ]
-            }
-            return data
-        except Exception as e:
-            print(f"Attempt {attempt + 1}: {e}")
-            if max_num_grids > min_num_grids + 1:
-                max_num_grids -= 1
-            if max_grid_width > min_grid_width + 1:
-                max_grid_width -= 1
-            if max_grid_height > min_grid_height + 1:
-                max_grid_height -= 1
-    raise Exception("Failed to generate datum after multiple attempts.")
+                data = {
+                    "messages": [
+                        {
+                            "role": "user",
+                            "content": f"<image>{meta_question}"
+                        },
+                        {
+                            "role": "assistant",
+                            "content": meta_answer
+                        }
+                    ],
+                    "images": [
+                        image_path
+                    ]
+                }
+                return data
+            except Exception as e:
+                print(f"Attempt {attempt + 1}: {e}")
+                if max_num_grids > min_num_grids + 1:
+                    max_num_grids -= 1
+                if max_grid_width > min_grid_width + 1:
+                    max_grid_width -= 1
+                if max_grid_height > min_grid_height + 1:
+                    max_grid_height -= 1
+        print("Failed to generate datum after 20 attempts. Restarting...")
 
 def main(n):
     # Create data directory and subdirectories
