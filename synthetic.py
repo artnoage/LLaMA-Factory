@@ -11,8 +11,8 @@ CANVAS_SIZE = (1000, 1000)
 MARGIN = 10
 
 def render_image(grids, image_path):
-    # Light gray background color
-    background_color = (245, 245, 245)
+    # Black background color
+    background_color = (0, 0, 0)
     canvas = Image.new('RGB', CANVAS_SIZE, background_color)
     draw = ImageDraw.Draw(canvas)
     try:
@@ -28,7 +28,7 @@ def render_image(grids, image_path):
         text_height = bbox[3] - bbox[1]
         text_x = x_start + (grid['width'] * tile_size - text_width) / 2
         text_y = y_start - text_height - 5
-        draw.text((text_x, text_y), grid['name'], fill=(0, 0, 0), font=font)
+        draw.text((text_x, text_y), grid['name'], fill=(255, 255, 255), font=font)  # White text for better visibility on black background
 
         for i in range(grid['height']):
             for j in range(grid['width']):
