@@ -45,12 +45,12 @@ from questions import simple_question_functions, create_meta_question_and_answer
 from complex_questions import complex_question_functions
 
 def generate_datum(data_id):
-    min_num_grids = 2
-    max_num_grids = 5
-    min_grid_width = 3
-    max_grid_width = 10
-    min_grid_height = 3
-    max_grid_height = 10
+    min_num_grids = 3
+    max_num_grids = 8
+    min_grid_width = 2
+    max_grid_width = 20
+    min_grid_height = 2
+    max_grid_height = 20
     for attempt in range(20):
         try:
             num_grids = random.randint(min_num_grids, max_num_grids)
