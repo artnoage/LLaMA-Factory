@@ -31,6 +31,15 @@ def render_image(grids, image_path):
         text_y = y_start - text_height - 5
         draw.text((text_x, text_y), grid['name'], fill=(255, 255, 255), font=font)  # White text for better visibility on black background
 
+        # Draw gray border
+        border_color = (128, 128, 128)  # Gray color
+        border_width = 2
+        x_end = x_start + grid['width'] * tile_size
+        y_end = y_start + grid['height'] * tile_size
+        draw.rectangle([x_start - border_width, y_start - border_width, 
+                        x_end + border_width, y_end + border_width], 
+                       outline=border_color, width=border_width)
+
         for i in range(grid['height']):
             for j in range(grid['width']):
                 color_name = grid['array'][i][j]
