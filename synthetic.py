@@ -41,8 +41,8 @@ def render_image(grids, image_path):
     return image_path
 
 # Import question functions
-from questions import *
-from complex_questions import *
+from questions import simple_question_functions
+from complex_questions import complex_question_functions
 
 def generate_datum(data_id):
     min_num_grids = 2
@@ -66,40 +66,6 @@ def generate_datum(data_id):
             image_path = f'data/arc_data/{data_id}.png'
             render_image(grids, image_path)
 
-            simple_question_functions = [
-                count_color_in_grid,
-                total_color_in_all_grids,
-                compare_colors_between_grids,
-                which_grid_has_most_color,
-                is_color_present_in_grid,
-                compare_grid_sizes,
-                compare_total_tiles,
-                count_color_in_row,
-                count_color_in_column,
-                count_rows_with_color,
-                count_columns_with_color,
-                get_grid_dimensions,
-                compare_grid_dimensions,
-                count_unique_colors,
-                find_most_common_color,
-                compare_grid_perimeters
-            ]
-            complex_question_functions = [
-                rotate_grid_90_clockwise,
-                rotate_grid_180,
-                rotate_grid_270_clockwise,
-                reflect_grid_horizontally,
-                reflect_grid_vertically,
-                count_color_patterns,
-                find_largest_single_color_area,
-                generate_grid_code,
-                count_diagonal_color_pattern,
-                calculate_color_density,
-                find_color_islands,
-                analyze_color_distribution,
-                compare_grid_complexity,
-                find_color_path
-            ]
             num_simple_questions = random.randint(2, 3)
             num_complex_questions = random.randint(1, 2)
             question_answer_pairs = []

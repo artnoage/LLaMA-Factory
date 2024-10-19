@@ -1,6 +1,25 @@
 import numpy as np
 import random
 
+simple_question_functions = [
+    count_color_in_grid,
+    total_color_in_all_grids,
+    compare_colors_between_grids,
+    which_grid_has_most_color,
+    is_color_present_in_grid,
+    compare_grid_sizes,
+    compare_total_tiles,
+    count_color_in_row,
+    count_color_in_column,
+    count_rows_with_color,
+    count_columns_with_color,
+    get_grid_dimensions,
+    compare_grid_dimensions,
+    count_unique_colors,
+    find_most_common_color,
+    compare_grid_perimeters
+]
+
 def count_color_in_grid(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     color = random.choice(list(COLOR_MAP.keys()))
