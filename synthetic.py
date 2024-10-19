@@ -7,7 +7,7 @@ from grid_generator import generate_grid, place_grids
 from color_map import COLOR_MAP
 from questions import simple_question_functions
 from complex_questions import complex_question_functions, create_complex_meta_question_and_answer
-from relationships import ColorRowRelationship, get_random_relationship
+from relationships import *
 import random
 
 CANVAS_SIZE = (1000, 1000)
@@ -89,7 +89,7 @@ def create_relation_questions_and_answers(grids):
 def generate_datum(data_id):
     while True:  # Keep trying until we succeed
         min_num_grids = 3
-        max_num_grids = 8
+        max_num_grids = 9
         min_grid_width = 2
         max_grid_width = 20
         min_grid_height = 2

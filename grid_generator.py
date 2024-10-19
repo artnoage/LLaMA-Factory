@@ -14,8 +14,8 @@ def generate_grid(name, existing_grids, min_width=3, max_width=20, min_height=3,
     
     # Initialize base weights
     base_weight = {c: 1 for c in colors}
-    base_weight['Empty'] = 10  # Much higher base weight for empty tiles
-    beta = 4  # Influence of neighboring colors
+    base_weight['Empty'] = 16  # Much higher base weight for empty tiles
+    beta = 5  # Influence of neighboring colors
     
     # Initialize grid
     grid = np.full((height, width), None, dtype=object)

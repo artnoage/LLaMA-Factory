@@ -170,3 +170,4 @@ wandb/
 .aider*
 # Ignore the folder containing generated images
 data/arc_data/
+offload
