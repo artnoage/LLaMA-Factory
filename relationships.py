@@ -3,9 +3,6 @@ import numpy as np
 from color_map import COLOR_MAP
 
 class Relationship:
-    def __init__(self):
-        self.colors = random.sample(list(COLOR_MAP.keys()), k=2)
-
     def get_description(self):
         raise NotImplementedError("Subclasses must implement this method")
 
@@ -17,8 +14,7 @@ class Relationship:
 
 class ColorSwapRelationship(Relationship):
     def __init__(self):
-        super().__init__()
-        self.color1, self.color2 = self.colors
+        self.color1, self.color2 = random.sample(list(COLOR_MAP.keys()), k=2)
 
     def get_description(self):
         return f"Swap all {self.color1} tiles with {self.color2} tiles."
@@ -40,8 +36,7 @@ def apply(grid):
 
 class ColorFillRelationship(Relationship):
     def __init__(self):
-        super().__init__()
-        self.target_color, self.fill_color = self.colors
+        self.target_color, self.fill_color = random.sample(list(COLOR_MAP.keys()), k=2)
         self.threshold = random.uniform(0.3, 0.7)
 
     def get_description(self):
@@ -66,8 +61,7 @@ def apply(grid):
 
 class ColorBorderRelationship(Relationship):
     def __init__(self):
-        super().__init__()
-        self.inner_color, self.border_color = self.colors
+        self.inner_color, self.border_color = random.sample(list(COLOR_MAP.keys()), k=2)
 
     def get_description(self):
         return f"Add a border of {self.border_color} around areas of {self.inner_color}."
