@@ -20,8 +20,12 @@ def count_color_in_grid(grids, COLOR_MAP):
 def total_color_in_all_grids(grids, COLOR_MAP):
     color = random.choice(list(COLOR_MAP.keys()))
     total_count = sum(np.sum(grid['array'] == color) for grid in grids)
-    question = f"How many {color} tiles are there in all grids?"
-    answer = f"There are a total of {total_count} {color} tiles across all grids."
+    if color == 'Empty':
+        question = f"How many empty tiles are there in all grids?"
+        answer = f"There are a total of {total_count} empty tiles across all grids."
+    else:
+        question = f"How many {color} tiles are there in all grids?"
+        answer = f"There are a total of {total_count} {color} tiles across all grids."
     return question, answer
 
 def compare_colors_between_grids(grids, COLOR_MAP):
@@ -40,8 +44,12 @@ def compare_colors_between_grids(grids, COLOR_MAP):
             comparison = "fewer"
         else:
             comparison = "the same number of"
-        question = f"Does {grid_name1} have more {color} tiles than {grid_name2}?"
-        answer = f"{grid_name1} has {comparison} {color} tiles compared to {grid_name2}. Specifically, {grid_name1} has {count1} {color} tiles, while {grid_name2} has {count2} {color} tiles."
+        if color == 'Empty':
+            question = f"Does {grid_name1} have more empty tiles than {grid_name2}?"
+            answer = f"{grid_name1} has {comparison} empty tiles compared to {grid_name2}. Specifically, {grid_name1} has {count1} empty tiles, while {grid_name2} has {count2} empty tiles."
+        else:
+            question = f"Does {grid_name1} have more {color} tiles than {grid_name2}?"
+            answer = f"{grid_name1} has {comparison} {color} tiles compared to {grid_name2}. Specifically, {grid_name1} has {count1} {color} tiles, while {grid_name2} has {count2} {color} tiles."
         return question, answer
     return None, None
 
@@ -55,12 +63,20 @@ def which_grid_has_most_color(grids, COLOR_MAP):
             max_count = count
             max_grid = grid['name']
     if max_grid:
-        question = f"Which grid has the most {color} tiles?"
-        answer = f"{max_grid} has the most {color} tiles with a total of {max_count} {color} tiles."
+        if color == 'Empty':
+            question = f"Which grid has the most empty tiles?"
+            answer = f"{max_grid} has the most empty tiles with a total of {max_count} empty tiles."
+        else:
+            question = f"Which grid has the most {color} tiles?"
+            answer = f"{max_grid} has the most {color} tiles with a total of {max_count} {color} tiles."
         return question, answer
     else:
-        question = f"Which grid has the most {color} tiles?"
-        answer = f"No grid has any {color} tiles. The color {color} is not present in any of the grids."
+        if color == 'Empty':
+            question = f"Which grid has the most empty tiles?"
+            answer = f"No grid has any empty tiles. All grids are fully colored."
+        else:
+            question = f"Which grid has the most {color} tiles?"
+            answer = f"No grid has any {color} tiles. The color {color} is not present in any of the grids."
         return question, answer
 
 def is_color_present_in_grid(grids, COLOR_MAP):

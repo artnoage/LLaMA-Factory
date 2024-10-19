@@ -68,8 +68,18 @@ def count_color_patterns(grids, COLOR_MAP):
             for j in range(array.shape[1] - 1):
                 if array[i][j] == color1 and array[i][j+1] == color2:
                     count += 1
-        question = f"How many times does the pattern '{color1} followed by {color2}' appear horizontally in {grid_name}?"
-        answer = f"The pattern '{color1} followed by {color2}' appears {count} times horizontally in {grid_name}."
+        if color1 == 'Empty' and color2 == 'Empty':
+            question = f"How many times does the pattern 'two consecutive empty tiles' appear horizontally in {grid_name}?"
+            answer = f"The pattern 'two consecutive empty tiles' appears {count} times horizontally in {grid_name}."
+        elif color1 == 'Empty':
+            question = f"How many times does the pattern 'an empty tile followed by a {color2} tile' appear horizontally in {grid_name}?"
+            answer = f"The pattern 'an empty tile followed by a {color2} tile' appears {count} times horizontally in {grid_name}."
+        elif color2 == 'Empty':
+            question = f"How many times does the pattern 'a {color1} tile followed by an empty tile' appear horizontally in {grid_name}?"
+            answer = f"The pattern 'a {color1} tile followed by an empty tile' appears {count} times horizontally in {grid_name}."
+        else:
+            question = f"How many times does the pattern '{color1} followed by {color2}' appear horizontally in {grid_name}?"
+            answer = f"The pattern '{color1} followed by {color2}' appears {count} times horizontally in {grid_name}."
         return question, answer
     return None, None
 
@@ -155,8 +165,12 @@ def calculate_color_density(grids, COLOR_MAP):
         total_tiles = array.size
         color_count = np.sum(array == color)
         density = (color_count / total_tiles) * 100
-        question = f"What is the density of {color} tiles in {grid_name}?"
-        answer = f"The density of {color} tiles in {grid_name} is {density:.2f}%."
+        if color == 'Empty':
+            question = f"What is the density of empty tiles in {grid_name}?"
+            answer = f"The density of empty tiles in {grid_name} is {density:.2f}%."
+        else:
+            question = f"What is the density of {color} tiles in {grid_name}?"
+            answer = f"The density of {color} tiles in {grid_name} is {density:.2f}%."
         return question, answer
     return None, None
 
@@ -183,8 +197,12 @@ def find_color_islands(grids, COLOR_MAP):
                     dfs(i, j, visited)
                     islands += 1
 
-        question = f"How many isolated 'islands' of {color} exist in {grid_name}?"
-        answer = f"There are {islands} isolated 'islands' of {color} in {grid_name}."
+        if color == 'Empty':
+            question = f"How many isolated 'islands' of empty tiles exist in {grid_name}?"
+            answer = f"There are {islands} isolated 'islands' of empty tiles in {grid_name}."
+        else:
+            question = f"How many isolated 'islands' of {color} exist in {grid_name}?"
+            answer = f"There are {islands} isolated 'islands' of {color} in {grid_name}."
         return question, answer
     return None, None
 
@@ -268,15 +286,26 @@ def find_color_path(grids, COLOR_MAP):
         visited_tb = np.zeros((height, width), dtype=bool)
         tb_path_exists = any(dfs(0, j, visited_tb, 'bottom') for j in range(width) if array[0][j] == color)
 
-        question = f"Is there a continuous path of {color} from left to right or top to bottom in {grid_name}?"
-        if lr_path_exists and tb_path_exists:
-            answer = f"Yes, there is a continuous path of {color} from both left to right and top to bottom in {grid_name}."
-        elif lr_path_exists:
-            answer = f"Yes, there is a continuous path of {color} from left to right in {grid_name}, but not from top to bottom."
-        elif tb_path_exists:
-            answer = f"Yes, there is a continuous path of {color} from top to bottom in {grid_name}, but not from left to right."
+        if color == 'Empty':
+            question = f"Is there a continuous path of empty tiles from left to right or top to bottom in {grid_name}?"
+            if lr_path_exists and tb_path_exists:
+                answer = f"Yes, there is a continuous path of empty tiles from both left to right and top to bottom in {grid_name}."
+            elif lr_path_exists:
+                answer = f"Yes, there is a continuous path of empty tiles from left to right in {grid_name}, but not from top to bottom."
+            elif tb_path_exists:
+                answer = f"Yes, there is a continuous path of empty tiles from top to bottom in {grid_name}, but not from left to right."
+            else:
+                answer = f"No, there is no continuous path of empty tiles from left to right or top to bottom in {grid_name}."
         else:
-            answer = f"No, there is no continuous path of {color} from left to right or top to bottom in {grid_name}."
+            question = f"Is there a continuous path of {color} from left to right or top to bottom in {grid_name}?"
+            if lr_path_exists and tb_path_exists:
+                answer = f"Yes, there is a continuous path of {color} from both left to right and top to bottom in {grid_name}."
+            elif lr_path_exists:
+                answer = f"Yes, there is a continuous path of {color} from left to right in {grid_name}, but not from top to bottom."
+            elif tb_path_exists:
+                answer = f"Yes, there is a continuous path of {color} from top to bottom in {grid_name}, but not from left to right."
+            else:
+                answer = f"No, there is no continuous path of {color} from left to right or top to bottom in {grid_name}."
         return question, answer
     return None, None
 
