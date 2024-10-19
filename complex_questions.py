@@ -13,7 +13,7 @@ def rotate_grid_90_clockwise(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def rotate_grid_180(grids):
+def rotate_grid_180(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -24,7 +24,7 @@ def rotate_grid_180(grids):
         return question, answer
     return None, None
 
-def rotate_grid_270_clockwise(grids):
+def rotate_grid_270_clockwise(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -35,7 +35,7 @@ def rotate_grid_270_clockwise(grids):
         return question, answer
     return None, None
 
-def reflect_grid_horizontally(grids):
+def reflect_grid_horizontally(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -46,7 +46,7 @@ def reflect_grid_horizontally(grids):
         return question, answer
     return None, None
 
-def reflect_grid_vertically(grids):
+def reflect_grid_vertically(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -73,7 +73,7 @@ def count_color_patterns(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def find_largest_single_color_area(grids):
+def find_largest_single_color_area(grids, COLOR_MAP):
     def dfs(i, j, color, visited):
         if i < 0 or i >= height or j < 0 or j >= width or visited[i][j] or array[i][j] != color:
             return 0
@@ -106,7 +106,7 @@ def find_largest_single_color_area(grids):
         return question, answer
     return None, None
 
-def generate_grid_code(grids):
+def generate_grid_code(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -184,7 +184,7 @@ def find_color_islands(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def analyze_color_distribution(grids):
+def analyze_color_distribution(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -212,7 +212,7 @@ def analyze_color_distribution(grids):
         return question, answer
     return None, None
 
-def compare_grid_complexity(grids):
+def compare_grid_complexity(grids, COLOR_MAP):
     def count_transitions(grid):
         array = grid['array']
         horizontal = np.sum(array[:, :-1] != array[:, 1:])

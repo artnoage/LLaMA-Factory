@@ -74,7 +74,7 @@ def is_color_present_in_grid(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def compare_grid_sizes(grids):
+def compare_grid_sizes(grids, COLOR_MAP):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
@@ -93,7 +93,7 @@ def compare_grid_sizes(grids):
         return question, answer
     return None, None
 
-def compare_total_tiles(grids):
+def compare_total_tiles(grids, COLOR_MAP):
     total_tiles = sum(grid['width'] * grid['height'] for grid in grids)
     largest_grid = max(grids, key=lambda g: g['width'] * g['height'])
     largest_grid_tiles = largest_grid['width'] * largest_grid['height']
@@ -147,7 +147,7 @@ def count_columns_with_color(grids, COLOR_MAP):
         return question, answer
     return None, None
 
-def get_grid_dimensions(grids):
+def get_grid_dimensions(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -156,7 +156,7 @@ def get_grid_dimensions(grids):
         return question, answer
     return None, None
 
-def compare_grid_dimensions(grids):
+def compare_grid_dimensions(grids, COLOR_MAP):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
@@ -176,7 +176,7 @@ def compare_grid_dimensions(grids):
         return question, answer
     return None, None
 
-def count_unique_colors(grids):
+def count_unique_colors(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -187,7 +187,7 @@ def count_unique_colors(grids):
         return question, answer
     return None, None
 
-def find_most_common_color(grids):
+def find_most_common_color(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])
     grid = next((g for g in grids if g['name'] == grid_name), None)
     if grid:
@@ -199,7 +199,7 @@ def find_most_common_color(grids):
         return question, answer
     return None, None
 
-def compare_grid_perimeters(grids):
+def compare_grid_perimeters(grids, COLOR_MAP):
     if len(grids) < 2:
         return None, None
     grid_name1, grid_name2 = random.sample([g['name'] for g in grids], 2)
