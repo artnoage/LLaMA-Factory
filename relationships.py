@@ -21,23 +21,27 @@ class ColorSwapRelationship(Relationship):
         self.arg_info = {"color1": self.color1, "color2": self.color2}
 
     def get_description(self):
-        return f"Swap all {self.color1} tiles with {self.color2} tiles."
+        return f"If both {self.color1} and {self.color2} are present, swap all {self.color1} tiles with {self.color2} tiles."
 
     def apply(self, grid):
-        grid[grid == self.color1] = 'temp'
-        grid[grid == self.color2] = self.color1
-        grid[grid == 'temp'] = self.color2
-        return grid
+        if np.any(grid == self.color1) and np.any(grid == self.color2):
+            grid[grid == self.color1] = 'temp'
+            grid[grid == self.color2] = self.color1
+            grid[grid == 'temp'] = self.color2
+            return grid
+        return "reject"
 
     def get_code(self, arg_info=None):
         if arg_info is None:
             arg_info = self.arg_info
         return f"""
 def apply(grid):
-    grid[grid == '{arg_info['color1']}'] = 'temp'
-    grid[grid == '{arg_info['color2']}'] = '{arg_info['color1']}'
-    grid[grid == 'temp'] = '{arg_info['color2']}'
-    return grid
+    if np.any(grid == '{arg_info['color1']}') and np.any(grid == '{arg_info['color2']}'):
+        grid[grid == '{arg_info['color1']}'] = 'temp'
+        grid[grid == '{arg_info['color2']}'] = '{arg_info['color1']}'
+        grid[grid == 'temp'] = '{arg_info['color2']}'
+        return grid
+    return "reject"
 """
 
 class ColorFillRelationship(Relationship):
@@ -47,14 +51,15 @@ class ColorFillRelationship(Relationship):
         self.arg_info = {"target_color": self.target_color, "fill_color": self.fill_color, "threshold": self.threshold}
 
     def get_description(self):
-        return f"If more than {self.threshold:.0%} of the grid is {self.target_color}, fill the rest with {self.fill_color}."
+        return f"If more than {self.threshold:.0%} of the grid is {self.target_color}, fill the rest with {self.fill_color}. Otherwise, return the original grid."
 
     def apply(self, grid):
         total_cells = grid.size
         target_count = np.sum(grid == self.target_color)
         if target_count / total_cells > self.threshold:
             grid[grid != self.target_color] = self.fill_color
-        return grid
+            return grid
+        return "reject"
 
     def get_code(self, arg_info=None):
         if arg_info is None:
@@ -65,7 +70,8 @@ def apply(grid):
     target_count = np.sum(grid == '{arg_info['target_color']}')
     if target_count / total_cells > {arg_info['threshold']}:
         grid[grid != '{arg_info['target_color']}'] = '{arg_info['fill_color']}'
-    return grid
+        return grid
+    return "reject"
 """
 
 class ColorBorderRelationship(Relationship):
@@ -74,33 +80,37 @@ class ColorBorderRelationship(Relationship):
         self.arg_info = {"inner_color": self.inner_color, "border_color": self.border_color}
 
     def get_description(self):
-        return f"Add a border of {self.border_color} around areas of {self.inner_color}."
+        return f"If {self.inner_color} is present, add a border of {self.border_color} around areas of {self.inner_color}. Otherwise, return the original grid."
 
     def apply(self, grid):
-        height, width = grid.shape
-        for i in range(height):
-            for j in range(width):
-                if grid[i, j] == self.inner_color:
-                    for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
-                        ni, nj = i + di, j + dj
-                        if 0 <= ni < height and 0 <= nj < width and grid[ni, nj] != self.inner_color:
-                            grid[ni, nj] = self.border_color
-        return grid
+        if np.any(grid == self.inner_color):
+            height, width = grid.shape
+            for i in range(height):
+                for j in range(width):
+                    if grid[i, j] == self.inner_color:
+                        for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
+                            ni, nj = i + di, j + dj
+                            if 0 <= ni < height and 0 <= nj < width and grid[ni, nj] != self.inner_color:
+                                grid[ni, nj] = self.border_color
+            return grid
+        return "reject"
 
     def get_code(self, arg_info=None):
         if arg_info is None:
             arg_info = self.arg_info
         return f"""
 def apply(grid):
-    height, width = grid.shape
-    for i in range(height):
-        for j in range(width):
-            if grid[i, j] == '{arg_info['inner_color']}':
-                for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
-                    ni, nj = i + di, j + dj
-                    if 0 <= ni < height and 0 <= nj < width and grid[ni, nj] != '{arg_info['inner_color']}':
-                        grid[ni, nj] = '{arg_info['border_color']}'
-    return grid
+    if np.any(grid == '{arg_info['inner_color']}'):
+        height, width = grid.shape
+        for i in range(height):
+            for j in range(width):
+                if grid[i, j] == '{arg_info['inner_color']}':
+                    for di, dj in [(-1,0), (1,0), (0,-1), (0,1)]:
+                        ni, nj = i + di, j + dj
+                        if 0 <= ni < height and 0 <= nj < width and grid[ni, nj] != '{arg_info['inner_color']}':
+                            grid[ni, nj] = '{arg_info['border_color']}'
+        return grid
+    return "reject"
 """
 
 class ChangeRowRelationship(Relationship):
@@ -110,22 +120,27 @@ class ChangeRowRelationship(Relationship):
         self.arg_info = {"new_color": self.new_color}
 
     def get_description(self):
-        return f"Change a whole row to {self.new_color}."
+        return f"If the grid has at least one row, change a whole row to {self.new_color}. Otherwise, return the original grid."
 
     def apply(self, grid):
         height, width = grid.shape
-        self.row_index = random.randint(0, height - 1)
-        grid[self.row_index, :] = self.new_color
-        self.arg_info["row_index"] = self.row_index
-        return grid
+        if height > 0:
+            self.row_index = random.randint(0, height - 1)
+            grid[self.row_index, :] = self.new_color
+            self.arg_info["row_index"] = self.row_index
+            return grid
+        return "reject"
 
     def get_code(self, arg_info=None):
         if arg_info is None:
             arg_info = self.arg_info
         return f"""
 def apply(grid):
-    grid[{arg_info['row_index']}, :] = '{arg_info['new_color']}'
-    return grid
+    height, width = grid.shape
+    if height > 0:
+        grid[{arg_info['row_index']}, :] = '{arg_info['new_color']}'
+        return grid
+    return "reject"
 """
 
 class ChangeColumnRelationship(Relationship):
@@ -135,22 +150,27 @@ class ChangeColumnRelationship(Relationship):
         self.arg_info = {"new_color": self.new_color}
 
     def get_description(self):
-        return f"Change a whole column to {self.new_color}."
+        return f"If the grid has at least one column, change a whole column to {self.new_color}. Otherwise, return the original grid."
 
     def apply(self, grid):
         height, width = grid.shape
-        self.column_index = random.randint(0, width - 1)
-        grid[:, self.column_index] = self.new_color
-        self.arg_info["column_index"] = self.column_index
-        return grid
+        if width > 0:
+            self.column_index = random.randint(0, width - 1)
+            grid[:, self.column_index] = self.new_color
+            self.arg_info["column_index"] = self.column_index
+            return grid
+        return "reject"
 
     def get_code(self, arg_info=None):
         if arg_info is None:
             arg_info = self.arg_info
         return f"""
 def apply(grid):
-    grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
-    return grid
+    height, width = grid.shape
+    if width > 0:
+        grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
+        return grid
+    return "reject"
 """
 
 class FractalGridRelationship(Relationship):
