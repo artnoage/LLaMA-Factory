@@ -18,46 +18,46 @@ class Relationship:
 class ColorRowRelationship(Relationship):
     def __init__(self):
         super().__init__()
-        self.extra_params = {"row_probability": random.uniform(0.3, 0.7)}
+        self.extra_params = {"row_threshold": random.randint(1, 3)}
 
     def get_description(self):
-        return f"If a tile has color {self.color}, replace the whole row with the color {self.color} with probability {self.extra_params['row_probability']:.2f}."
+        return f"If a row has at least {self.extra_params['row_threshold']} tiles of color {self.color}, replace the whole row with the color {self.color}."
 
     def get_code(self):
         return f"""
 def apply_relationship(grid):
     for i in range(grid.shape[0]):
-        if '{self.color}' in grid[i] and random.random() < {self.extra_params['row_probability']}:
+        if np.sum(grid[i] == '{self.color}') >= {self.extra_params['row_threshold']}:
             grid[i] = '{self.color}'
     return grid
 """
 
     def apply(self, grid):
         for i in range(grid.shape[0]):
-            if self.color in grid[i] and random.random() < self.extra_params['row_probability']:
+            if np.sum(grid[i] == self.color) >= self.extra_params['row_threshold']:
                 grid[i] = self.color
         return grid
 
 class ColorColumnRelationship(Relationship):
     def __init__(self):
         super().__init__()
-        self.extra_params = {"column_probability": random.uniform(0.3, 0.7)}
+        self.extra_params = {"column_threshold": random.randint(1, 3)}
 
     def get_description(self):
-        return f"If a tile has color {self.color}, replace the whole column with the color {self.color} with probability {self.extra_params['column_probability']:.2f}."
+        return f"If a column has at least {self.extra_params['column_threshold']} tiles of color {self.color}, replace the whole column with the color {self.color}."
 
     def get_code(self):
         return f"""
 def apply_relationship(grid):
     for j in range(grid.shape[1]):
-        if '{self.color}' in grid[:, j] and random.random() < {self.extra_params['column_probability']}:
+        if np.sum(grid[:, j] == '{self.color}') >= {self.extra_params['column_threshold']}:
             grid[:, j] = '{self.color}'
     return grid
 """
 
     def apply(self, grid):
         for j in range(grid.shape[1]):
-            if self.color in grid[:, j] and random.random() < self.extra_params['column_probability']:
+            if np.sum(grid[:, j] == self.color) >= self.extra_params['column_threshold']:
                 grid[:, j] = self.color
         return grid
 
