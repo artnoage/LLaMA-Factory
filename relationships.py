@@ -44,36 +44,6 @@ def apply(grid):
     return "reject"
 """
 
-class ColorFillRelationship(Relationship):
-    def __init__(self):
-        self.target_color, self.fill_color = random.sample(list(COLOR_MAP.keys()), k=2)
-        self.threshold = random.uniform(0.3, 0.7)
-        self.arg_info = {"target_color": self.target_color, "fill_color": self.fill_color, "threshold": self.threshold}
-
-    def get_description(self):
-        return f"If more than {self.threshold:.0%} of the grid is {self.target_color}, fill the rest with {self.fill_color}. Otherwise, return the original grid."
-
-    def apply(self, grid):
-        total_cells = grid.size
-        target_count = np.sum(grid == self.target_color)
-        if target_count / total_cells > self.threshold:
-            grid[grid != self.target_color] = self.fill_color
-            return grid
-        return "reject"
-
-    def get_code(self, arg_info=None):
-        if arg_info is None:
-            arg_info = self.arg_info
-        return f"""
-def apply(grid):
-    total_cells = grid.size
-    target_count = np.sum(grid == '{arg_info['target_color']}')
-    if target_count / total_cells > {arg_info['threshold']}:
-        grid[grid != '{arg_info['target_color']}'] = '{arg_info['fill_color']}'
-        return grid
-    return "reject"
-"""
-
 class ColorBorderRelationship(Relationship):
     def __init__(self):
         self.inner_color, self.border_color = random.sample(list(COLOR_MAP.keys()), k=2)
@@ -164,14 +134,10 @@ class ChangeColumnRelationship(Relationship):
     def get_code(self, arg_info=None):
         if arg_info is None:
             arg_info = self.arg_info
-        return f"""
-def apply(grid):
-    height, width = grid.shape
-    if width > 0:
-        grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
-        return grid
-    return "reject"
-"""
+        return f"""def apply(grid):
+                height, width = grid.shape
+                grid[:, {arg_info['column_index']}] = '{arg_info['new_color']}'
+                return grid"""
 
 class FractalGridRelationship(Relationship):
     def __init__(self):
@@ -199,8 +165,6 @@ class FractalGridRelationship(Relationship):
     def get_code(self, arg_info=None):
         return """
 def apply(grid):
-    if grid.size > 20:
-        return "reject"
     height, width = grid.shape
     new_grid = np.empty((height * height, width * width), dtype=object)
     
@@ -219,5 +183,5 @@ def apply(grid):
         return grid.size <= 20
 
 def get_random_relationship():
-    return random.choice([ColorSwapRelationship(), ColorFillRelationship(), ColorBorderRelationship(),
+    return random.choice([ColorSwapRelationship(),  ColorBorderRelationship(),
                           ChangeRowRelationship(), ChangeColumnRelationship(), FractalGridRelationship()])
