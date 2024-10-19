@@ -75,8 +75,10 @@ def generate_datum(data_id):
                     min_height=min_grid_height,
                     max_height=max_grid_height
                     ) for i in range(num_grids)]
-                if not place_grids(grids, CANVAS_SIZE, MARGIN):
+                placed_grids = place_grids(grids, MARGIN)
+                if not placed_grids:
                     raise Exception("Failed to place all grids")
+                grids = placed_grids
                 image_path = f'data/arc_data/{data_id}.png'
                 render_image(grids, image_path)
 

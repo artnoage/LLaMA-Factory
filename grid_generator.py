@@ -54,47 +54,58 @@ def generate_grid(name, min_width=3, max_width=20, min_height=3, max_height=20):
         'array': grid
     }
 
-def place_grids(grids, canvas_size, margin):
+def place_grids(grids, margin):
     placed_grids = []
     extra_margin = 10  # Reduced additional margin between grids
     max_attempts = 1000  # Increased maximum attempts
+    canvas_size = [500, 500]  # Initial canvas size
 
-    # Sort grids by area (largest first)
-    grids.sort(key=lambda g: g['width'] * g['height'], reverse=True)
+    while True:
+        # Sort grids by area (largest first)
+        grids.sort(key=lambda g: g['width'] * g['height'], reverse=True)
 
-    for grid in grids:
-        grid_width = grid['width'] * grid['tile_size']
-        grid_height = grid['height'] * grid['tile_size']
-        
-        for _ in range(max_attempts):
-            x = random.randint(margin, canvas_size[0] - grid_width - margin)
-            y = random.randint(margin, canvas_size[1] - grid_height - margin)
+        placed_grids = []
+        for grid in grids:
+            grid_width = grid['width'] * grid['tile_size']
+            grid_height = grid['height'] * grid['tile_size']
             
-            # Check if this position overlaps with any previously placed grid
-            overlap = any(
-                rect_overlap(
-                    (x - extra_margin, y - extra_margin, 
-                     x + grid_width + extra_margin, y + grid_height + extra_margin),
-                    (pg['position'][0] - extra_margin, pg['position'][1] - extra_margin, 
-                     pg['position'][0] + pg['width'] * pg['tile_size'] + extra_margin,
-                     pg['position'][1] + pg['height'] * pg['tile_size'] + extra_margin)
+            for _ in range(max_attempts):
+                x = random.randint(margin, canvas_size[0] - grid_width - margin)
+                y = random.randint(margin, canvas_size[1] - grid_height - margin)
+                
+                # Check if this position overlaps with any previously placed grid
+                overlap = any(
+                    rect_overlap(
+                        (x - extra_margin, y - extra_margin, 
+                         x + grid_width + extra_margin, y + grid_height + extra_margin),
+                        (pg['position'][0] - extra_margin, pg['position'][1] - extra_margin, 
+                         pg['position'][0] + pg['width'] * pg['tile_size'] + extra_margin,
+                         pg['position'][1] + pg['height'] * pg['tile_size'] + extra_margin)
+                    )
+                    for pg in placed_grids
                 )
-                for pg in placed_grids
-            )
-            
-            if not overlap:
-                grid['position'] = (x, y)
-                placed_grids.append(grid)
+                
+                if not overlap:
+                    grid['position'] = (x, y)
+                    placed_grids.append(grid)
+                    break
+            else:
+                # If we couldn't place this grid, increase canvas size and try again
+                canvas_size = [int(size * 1.1) for size in canvas_size]
                 break
         else:
-            # If we couldn't place this grid, try to adjust its size
-            if grid['width'] > 3 and grid['height'] > 3:
-                grid['width'] -= 1
-                grid['height'] -= 1
-                continue
-            return False  # Couldn't place all grids
-    
-    return True
+            # All grids placed successfully
+            break
+
+    # Rescale positions to fit 1000x1000 canvas
+    scale_x = 1000 / canvas_size[0]
+    scale_y = 1000 / canvas_size[1]
+    for grid in placed_grids:
+        x, y = grid['position']
+        grid['position'] = (int(x * scale_x), int(y * scale_y))
+        grid['tile_size'] = int(grid['tile_size'] * min(scale_x, scale_y))
+
+    return placed_grids
 
 def rect_overlap(rect1, rect2):
     return not (rect1[2] <= rect2[0] or rect1[0] >= rect2[2] or
