@@ -1,4 +1,5 @@
 import random
+import numpy as np
 from color_map import COLOR_MAP
 
 class Relationship:
