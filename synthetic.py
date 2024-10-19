@@ -7,6 +7,7 @@ from grid_generator import generate_grid, place_grids
 from color_map import COLOR_MAP
 from questions import simple_question_functions, create_meta_question_and_answer
 from complex_questions import complex_question_functions
+from relationships import ColorRowRelationship
 
 CANVAS_SIZE = (1000, 1000)
 MARGIN = 10
@@ -68,13 +69,27 @@ def generate_datum(data_id):
         for attempt in range(30):
             try:
                 num_grids = random.randint(min_num_grids, max_num_grids)
-                grids = [generate_grid(
-                    f"Grid_{i+1}",
-                    min_width=min_grid_width,
-                    max_width=max_grid_width,
-                    min_height=min_grid_height,
-                    max_height=max_grid_height
-                    ) for i in range(num_grids)]
+                grids = []
+                for i in range(num_grids):
+                    if random.choice([True, False]):  # 50% chance for a relational grid
+                        relationship = ColorRowRelationship()
+                        grid = generate_grid(
+                            f"Grid_{i+1}",
+                            min_width=min_grid_width,
+                            max_width=max_grid_width,
+                            min_height=min_grid_height,
+                            max_height=max_grid_height,
+                            relationship=relationship
+                        )
+                    else:
+                        grid = generate_grid(
+                            f"Grid_{i+1}",
+                            min_width=min_grid_width,
+                            max_width=max_grid_width,
+                            min_height=min_grid_height,
+                            max_height=max_grid_height
+                        )
+                    grids.append(grid)
                 placed_grids = place_grids(grids, MARGIN)
                 if not placed_grids:
                     raise Exception("Failed to place all grids")
