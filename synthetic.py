@@ -5,9 +5,10 @@ import json
 import argparse
 from grid_generator import generate_grid, place_grids
 from color_map import COLOR_MAP
-from questions import simple_question_functions, create_meta_question_and_answer
-from complex_questions import complex_question_functions
-from relationships import ColorRowRelationship
+from questions import simple_question_functions
+from complex_questions import complex_question_functions, create_complex_meta_question_and_answer
+from relationships import ColorRowRelationship, get_random_relationship
+import random
 
 CANVAS_SIZE = (1000, 1000)
 MARGIN = 10
@@ -58,6 +59,33 @@ def render_image(grids, image_path):
 
 
 
+def create_relation_questions_and_answers(grids):
+    relationships = [grid for grid in grids if grid['tag'] != "random grid"]
+    
+    if not relationships:
+        question = "Do you see any relationships between the grids?"
+        answer = "I don't see any obvious relationships between the grids."
+        return question, answer, None, None
+
+    question = "Do you see any relationships between the grids?"
+    answer = "Yes, I see the following relationships between the grids:\n"
+    for grid in relationships:
+        answer += f"{grid['name']} was {grid['tag']}\n"
+
+    # Randomly select a grid with a relationship for the follow-up question
+    related_grid = random.choice(relationships)
+    reference_grid_name = related_grid['tag'].split("grid ")[1].split(" using")[0]
+
+    followup_question = f"Can you produce code to create {related_grid['name']} from {reference_grid_name}?"
+    followup_answer = f"Yes, here's the code to create {related_grid['name']} from {reference_grid_name}:\n\n"
+    followup_answer += related_grid['relationship_code']
+    
+    # Add arg_info to the followup answer
+    if related_grid['arg_info']:
+        followup_answer += f"\n\nArguments used:\n{related_grid['arg_info']}"
+
+    return question, answer, followup_question, followup_answer
+
 def generate_datum(data_id):
     while True:  # Keep trying until we succeed
         min_num_grids = 3
@@ -87,47 +115,80 @@ def generate_datum(data_id):
                 image_path = f'data/arc_data/{data_id}.png'
                 render_image(grids, image_path)
 
-                num_simple_questions = random.randint(2, 3)
-                num_complex_questions = random.randint(1, 2)
-                question_answer_pairs = []
+                # Randomly decide whether to use complex meta questions or relation questions
+                if random.random() < 0.5:
+                    num_simple_questions = random.randint(2, 3)
+                    num_complex_questions = random.randint(1, 2)
+                    question_answer_pairs = []
 
-                for _ in range(num_simple_questions):
-                    func = random.choice(simple_question_functions)
-                    qa = func(grids)
-                    if qa and qa[0] and qa[1]:
-                        question_answer_pairs.append(qa)
+                    for _ in range(num_simple_questions):
+                        func = random.choice(simple_question_functions)
+                        qa = func(grids)
+                        if qa and qa[0] and qa[1]:
+                            question_answer_pairs.append(qa)
 
-                for _ in range(num_complex_questions):
-                    func = random.choice(complex_question_functions)
-                    qa = func(grids)
-                    if qa and qa[0] and qa[1]:
-                        question_answer_pairs.append(qa)
+                    for _ in range(num_complex_questions):
+                        func = random.choice(complex_question_functions)
+                        qa = func(grids)
+                        if qa and qa[0] and qa[1]:
+                            question_answer_pairs.append(qa)
 
-                if not question_answer_pairs:
-                    raise Exception("No questions or answers generated.")
+                    if not question_answer_pairs:
+                        raise Exception("No questions or answers generated.")
 
-                meta_question, meta_answer = create_meta_question_and_answer(question_answer_pairs)
-                if not meta_question or not meta_answer:
-                    raise Exception("Failed to create meta question and answer.")
+                    meta_question, meta_answer = create_complex_meta_question_and_answer(question_answer_pairs)
+                    if not meta_question or not meta_answer:
+                        raise Exception("Failed to create meta question and answer.")
+
+                    data = {
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": f"<image>{meta_question}"
+                            },
+                            {
+                                "role": "assistant",
+                                "content": meta_answer
+                            }
+                        ],
+                        "images": [
+                            image_path
+                        ]
+                    }
+                else:
+                    question, answer, followup_question, followup_answer = create_relation_questions_and_answers(grids)
+                    
+                    data = {
+                        "messages": [
+                            {
+                                "role": "user",
+                                "content": f"<image>{question}"
+                            },
+                            {
+                                "role": "assistant",
+                                "content": answer
+                            }
+                        ],
+                        "images": [
+                            image_path
+                        ]
+                    }
+                    
+                    if followup_question and followup_answer:
+                        data["messages"].extend([
+                            {
+                                "role": "user",
+                                "content": followup_question
+                            },
+                            {
+                                "role": "assistant",
+                                "content": followup_answer
+                            }
+                        ])
 
                 for grid in grids:
                     print(f"{grid['name']}: Width={grid['width']}, Height={grid['height']}, Tile Size={grid['tile_size']}")
 
-                data = {
-                    "messages": [
-                        {
-                            "role": "user",
-                            "content": f"<image>{meta_question}"
-                        },
-                        {
-                            "role": "assistant",
-                            "content": meta_answer
-                        }
-                    ],
-                    "images": [
-                        image_path
-                    ]
-                }
                 return data
             except Exception as e:
                 print(f"Attempt {attempt + 1}: {e}")
