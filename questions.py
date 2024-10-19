@@ -136,12 +136,14 @@ def compare_grid_dimensions(grids, grid_name1, grid_name2):
     if grid1 and grid2:
         question = f"How do the dimensions of {grid_name1} compare to {grid_name2}?"
         answer = f"{grid_name1} is {grid1['width']}x{grid1['height']}, while {grid_name2} is {grid2['width']}x{grid2['height']}."
-        if grid1['width'] * grid1['height'] > grid2['width'] * grid2['height']:
-            answer += f" {grid_name1} has a larger total area."
-        elif grid1['width'] * grid1['height'] < grid2['width'] * grid2['height']:
-            answer += f" {grid_name2} has a larger total area."
+        area1 = grid1['width'] * grid1['height']
+        area2 = grid2['width'] * grid2['height']
+        if area1 > area2:
+            answer += f" {grid_name1} has a larger total area ({area1} tiles vs {area2} tiles)."
+        elif area1 < area2:
+            answer += f" {grid_name2} has a larger total area ({area2} tiles vs {area1} tiles)."
         else:
-            answer += " Both grids have the same total area."
+            answer += f" Both grids have the same total area ({area1} tiles)."
         return question, answer
     return None, None
 

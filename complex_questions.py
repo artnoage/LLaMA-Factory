@@ -141,23 +141,6 @@ def calculate_color_density(grids, grid_name, color):
         return question, answer
     return None, None
 
-def compare_grid_perimeter_colors(grids, grid_name1, grid_name2):
-    def get_perimeter_colors(grid):
-        array = grid['array']
-        perimeter = np.concatenate([array[0], array[-1], array[1:-1, 0], array[1:-1, -1]])
-        return perimeter
-
-    grid1 = next((g for g in grids if g['name'] == grid_name1), None)
-    grid2 = next((g for g in grids if g['name'] == grid_name2), None)
-    if grid1 and grid2:
-        perimeter1 = get_perimeter_colors(grid1)
-        perimeter2 = get_perimeter_colors(grid2)
-        common_color1 = np.bincount(perimeter1).argmax()
-        common_color2 = np.bincount(perimeter2).argmax()
-        question = f"What is the most common color on the perimeter of {grid_name1} and {grid_name2}?"
-        answer = f"The most common color on the perimeter of {grid_name1} is {common_color1}, and for {grid_name2} it is {common_color2}."
-        return question, answer
-    return None, None
 
 def find_color_islands(grids, grid_name, color):
     def dfs(i, j, visited):
@@ -235,14 +218,14 @@ def compare_grid_complexity(grids, grid_name1, grid_name2):
     return None, None
 
 def find_color_path(grids, grid_name, color):
-    def dfs(i, j, visited):
+    def dfs(i, j, visited, target):
         if i < 0 or i >= height or j < 0 or j >= width or visited[i][j] or array[i][j] != color:
             return False
-        if j == width - 1:
+        if (j == width - 1 and target == 'right') or (i == height - 1 and target == 'bottom'):
             return True
         visited[i][j] = True
         for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-            if dfs(i + di, j + dj, visited):
+            if dfs(i + di, j + dj, visited, target):
                 return True
         return False
 
@@ -250,11 +233,23 @@ def find_color_path(grids, grid_name, color):
     if grid:
         array = grid['array']
         height, width = array.shape
-        visited = np.zeros((height, width), dtype=bool)
+        
+        # Check for left to right path
+        visited_lr = np.zeros((height, width), dtype=bool)
+        lr_path_exists = any(dfs(i, 0, visited_lr, 'right') for i in range(height) if array[i][0] == color)
+        
+        # Check for top to bottom path
+        visited_tb = np.zeros((height, width), dtype=bool)
+        tb_path_exists = any(dfs(0, j, visited_tb, 'bottom') for j in range(width) if array[0][j] == color)
 
-        path_exists = any(dfs(i, 0, visited) for i in range(height) if array[i][0] == color)
-
-        question = f"Is there a continuous path of {color} from left to right in {grid_name}?"
-        answer = f"{'Yes' if path_exists else 'No'}, there {'is' if path_exists else 'is not'} a continuous path of {color} from left to right in {grid_name}."
+        question = f"Is there a continuous path of {color} from left to right or top to bottom in {grid_name}?"
+        if lr_path_exists and tb_path_exists:
+            answer = f"Yes, there is a continuous path of {color} from both left to right and top to bottom in {grid_name}."
+        elif lr_path_exists:
+            answer = f"Yes, there is a continuous path of {color} from left to right in {grid_name}, but not from top to bottom."
+        elif tb_path_exists:
+            answer = f"Yes, there is a continuous path of {color} from top to bottom in {grid_name}, but not from left to right."
+        else:
+            answer = f"No, there is no continuous path of {color} from left to right or top to bottom in {grid_name}."
         return question, answer
     return None, None
