@@ -69,7 +69,14 @@ from complex_questions import (
     count_color_patterns,
     find_largest_single_color_area,
     generate_grid_code,
-    create_complex_meta_question_and_answer
+    create_complex_meta_question_and_answer,
+    count_diagonal_color_pattern,
+    calculate_color_density,
+    compare_grid_perimeter_colors,
+    find_color_islands,
+    analyze_color_distribution,
+    compare_grid_complexity,
+    find_color_path
 )
 
 def generate_datum(data_id):
@@ -120,7 +127,14 @@ def generate_datum(data_id):
                 reflect_grid_vertically,
                 count_color_patterns,
                 find_largest_single_color_area,
-                generate_grid_code
+                generate_grid_code,
+                count_diagonal_color_pattern,
+                calculate_color_density,
+                compare_grid_perimeter_colors,
+                find_color_islands,
+                analyze_color_distribution,
+                compare_grid_complexity,
+                find_color_path
             ]
             num_simple_questions = random.randint(2, 3)
             num_complex_questions = random.randint(1, 2)
