@@ -71,24 +71,14 @@ def generate_datum(data_id):
                 num_grids = random.randint(min_num_grids, max_num_grids)
                 grids = []
                 for i in range(num_grids):
-                    if random.choice([True, False]):  # 50% chance for a relational grid
-                        relationship = ColorRowRelationship()
-                        grid = generate_grid(
-                            f"Grid_{i+1}",
-                            min_width=min_grid_width,
-                            max_width=max_grid_width,
-                            min_height=min_grid_height,
-                            max_height=max_grid_height,
-                            relationship=relationship
-                        )
-                    else:
-                        grid = generate_grid(
-                            f"Grid_{i+1}",
-                            min_width=min_grid_width,
-                            max_width=max_grid_width,
-                            min_height=min_grid_height,
-                            max_height=max_grid_height
-                        )
+                    grid = generate_grid(
+                        f"Grid_{i+1}",
+                        grids,
+                        min_width=min_grid_width,
+                        max_width=max_grid_width,
+                        min_height=min_grid_height,
+                        max_height=max_grid_height
+                    )
                     grids.append(grid)
                 placed_grids = place_grids(grids, MARGIN)
                 if not placed_grids:
