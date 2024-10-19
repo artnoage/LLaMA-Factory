@@ -1,8 +1,6 @@
 import numpy as np
 import random
-
-import random
-import numpy as np
+from color_map import COLOR_MAP
 
 def rotate_grid_90_clockwise(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])

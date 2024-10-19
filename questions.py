@@ -1,5 +1,6 @@
 import random
 import numpy as np
+from color_map import COLOR_MAP
 
 def count_color_in_grid(grids, COLOR_MAP):
     grid_name = random.choice([g['name'] for g in grids])

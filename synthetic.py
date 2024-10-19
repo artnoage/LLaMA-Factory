@@ -3,7 +3,8 @@ import random
 import os
 import json
 import argparse
-from grid_generator import generate_grid, place_grids, COLOR_MAP
+from grid_generator import generate_grid, place_grids
+from color_map import COLOR_MAP
 from questions import simple_question_functions, create_meta_question_and_answer
 from complex_questions import complex_question_functions
 
